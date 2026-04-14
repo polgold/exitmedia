@@ -1,0 +1,176 @@
+import type { Metadata } from "next";
+import Image from "next/image";
+import Link from "next/link";
+import { notFound } from "next/navigation";
+import { getAllPostSlugs, getAllPostsMeta, getPostBySlug } from "@/lib/blog";
+import { ArrowLeft, ArrowUpRight } from "lucide-react";
+
+type Params = Promise<{ slug: string }>;
+
+export function generateStaticParams() {
+  return getAllPostSlugs().map((slug) => ({ slug }));
+}
+
+export async function generateMetadata({ params }: { params: Params }): Promise<Metadata> {
+  const { slug } = await params;
+  const post = await getPostBySlug(slug);
+  if (!post) return { title: "Nota no encontrada" };
+  return {
+    title: post.title,
+    description: post.excerpt,
+    openGraph: {
+      title: post.title,
+      description: post.excerpt,
+      type: "article",
+      publishedTime: post.date,
+      authors: post.author ? [post.author] : undefined,
+    },
+  };
+}
+
+function formatDate(d: string) {
+  return new Date(d).toLocaleDateString("es-AR", {
+    day: "numeric",
+    month: "long",
+    year: "numeric",
+  });
+}
+
+const tints: Record<string, string> = {
+  mcp: "rgba(17, 19, 24, 0.45)",
+  platforms: "rgba(26, 58, 92, 0.45)",
+  "ai-ecommerce": "rgba(45, 27, 61, 0.45)",
+  default: "rgba(20, 20, 20, 0.45)",
+};
+
+export default async function PostPage({ params }: { params: Params }) {
+  const { slug } = await params;
+  const post = await getPostBySlug(slug);
+  if (!post) notFound();
+
+  const tint = tints[post.cover || "default"] || tints.default;
+  const related = getAllPostsMeta()
+    .filter((p) => p.slug !== post.slug)
+    .slice(0, 2);
+
+  return (
+    <>
+      <div className="mx-auto max-w-3xl px-6 lg:px-8 pt-10">
+        <Link
+          href="/blog"
+          className="inline-flex items-center gap-2 text-sm text-muted hover:text-accent"
+        >
+          <ArrowLeft size={14} /> Volver al blog
+        </Link>
+      </div>
+
+      <article className="mx-auto max-w-3xl px-6 lg:px-8 pt-10 md:pt-14 pb-20">
+        <div className="text-xs uppercase tracking-widest text-muted flex items-center gap-3">
+          <span>{post.category}</span>
+          <span>·</span>
+          <span>{post.readingTime}</span>
+          <span>·</span>
+          <time dateTime={post.date}>{formatDate(post.date)}</time>
+        </div>
+
+        <h1 className="font-display text-[clamp(2.25rem,5vw,4rem)] leading-[1.05] tracking-[-0.02em] mt-5 text-balance">
+          {post.title}
+        </h1>
+
+        <p className="mt-6 text-xl text-muted leading-relaxed text-pretty">
+          {post.excerpt}
+        </p>
+
+        {post.author && (
+          <div className="mt-8 flex items-center gap-3 pb-8 border-b border-border">
+            <span className="w-9 h-9 rounded-full bg-accent text-background grid place-items-center font-display text-lg">
+              E
+            </span>
+            <div className="text-sm">
+              <div className="font-medium">{post.author}</div>
+              <div className="text-muted text-xs">ExitMedia · Buenos Aires</div>
+            </div>
+          </div>
+        )}
+
+        {post.image && (
+          <div className="mt-10 relative aspect-[16/9] rounded-2xl overflow-hidden border border-border">
+            <Image
+              src={post.image}
+              alt={post.imageAlt || post.title}
+              fill
+              className="object-cover"
+              sizes="(max-width: 1024px) 100vw, 768px"
+              priority
+            />
+            <div
+              aria-hidden
+              className="absolute inset-0"
+              style={{
+                background: `linear-gradient(180deg, ${tint} 0%, rgba(0,0,0,0.35) 100%)`,
+              }}
+            />
+          </div>
+        )}
+
+        <div
+          className="prose mt-12"
+          dangerouslySetInnerHTML={{ __html: post.contentHtml }}
+        />
+      </article>
+
+      {related.length > 0 && (
+        <section className="mx-auto max-w-5xl px-6 lg:px-8 pb-24 border-t border-border pt-16">
+          <div className="text-xs uppercase tracking-widest text-muted mb-6">
+            Seguí leyendo
+          </div>
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+            {related.map((p) => {
+              const t = tints[p.cover || "default"] || tints.default;
+              return (
+                <Link
+                  key={p.slug}
+                  href={`/blog/${p.slug}`}
+                  className="group rounded-2xl border border-border overflow-hidden hover:border-accent/60 transition-colors bg-surface"
+                >
+                  {p.image && (
+                    <div className="relative aspect-[5/3]">
+                      <Image
+                        src={p.image}
+                        alt={p.imageAlt || p.title}
+                        fill
+                        className="object-cover transition-transform duration-[1200ms] group-hover:scale-105"
+                        sizes="(max-width: 768px) 100vw, 45vw"
+                      />
+                      <div
+                        aria-hidden
+                        className="absolute inset-0"
+                        style={{
+                          background: `linear-gradient(180deg, ${t} 0%, rgba(0,0,0,0.6) 100%)`,
+                        }}
+                      />
+                    </div>
+                  )}
+                  <div className="p-5 flex items-center justify-between">
+                    <div>
+                      <div className="text-xs uppercase tracking-widest text-muted">
+                        {p.category}
+                      </div>
+                      <div className="font-display text-lg mt-1 line-clamp-2">
+                        {p.title}
+                      </div>
+                    </div>
+                    <ArrowUpRight
+                      size={18}
+                      className="shrink-0 text-muted group-hover:text-accent transition-colors"
+                    />
+                  </div>
+                </Link>
+              );
+            })}
+          </div>
+        </section>
+      )}
+    </>
+  );
+}
