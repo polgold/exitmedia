@@ -30,6 +30,48 @@ export default async function ServiciosPage({ params }: { params: PageParams }) 
   const locale = lang as Locale;
   const dict = await getDictionary(locale);
   const p = dict.pageServices;
+  const BASE = "https://exitmedia.com.ar";
+
+  const servicesJsonLd = {
+    "@context": "https://schema.org",
+    "@graph": [
+      {
+        "@type": "BreadcrumbList",
+        itemListElement: [
+          {
+            "@type": "ListItem",
+            position: 1,
+            name: dict.metadata.siteName,
+            item: `${BASE}/${locale}`,
+          },
+          {
+            "@type": "ListItem",
+            position: 2,
+            name: p.label,
+            item: `${BASE}/${locale}/servicios`,
+          },
+        ],
+      },
+      {
+        "@type": "ItemList",
+        name: p.title,
+        itemListElement: dict.services.map((s, i) => ({
+          "@type": "ListItem",
+          position: i + 1,
+          item: {
+            "@type": "Service",
+            "@id": `${BASE}/${locale}/servicios#${s.id}`,
+            name: s.title,
+            description: `${s.tagline} ${s.short}`,
+            provider: { "@id": `${BASE}/#org` },
+            areaServed: ["AR", "LATAM", "ES", "US"],
+            serviceType: s.title,
+            url: `${BASE}/${locale}/servicios#${s.id}`,
+          },
+        })),
+      },
+    ],
+  };
 
   return (
     <>
@@ -145,6 +187,10 @@ export default async function ServiciosPage({ params }: { params: PageParams }) 
       </div>
 
       <HomeContact lang={locale} dict={dict} />
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(servicesJsonLd) }}
+      />
     </>
   );
 }

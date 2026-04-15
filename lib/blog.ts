@@ -71,6 +71,14 @@ export function getAllPostsMeta(lang: Locale, rt: ReadingTimeT): PostMeta[] {
   return posts.sort((a, b) => (a.date < b.date ? 1 : -1));
 }
 
+export function getRawPost(lang: Locale, slug: string): { data: PostFrontmatter; content: string } | null {
+  try {
+    return readPost(lang, slug);
+  } catch {
+    return null;
+  }
+}
+
 export async function getPostBySlug(
   lang: Locale,
   slug: string,

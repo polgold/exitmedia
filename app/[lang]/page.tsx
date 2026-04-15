@@ -18,6 +18,16 @@ export default async function Home({ params }: { params: PageParams }) {
   const locale = lang as Locale;
   const dict = await getDictionary(locale);
 
+  const faqJsonLd = {
+    "@context": "https://schema.org",
+    "@type": "FAQPage",
+    mainEntity: dict.faq.items.map((item) => ({
+      "@type": "Question",
+      name: item.q,
+      acceptedAnswer: { "@type": "Answer", text: item.a },
+    })),
+  };
+
   return (
     <>
       <Hero lang={locale} dict={dict} />
@@ -28,6 +38,10 @@ export default async function Home({ params }: { params: PageParams }) {
       <Testimonials dict={dict} />
       <FAQ dict={dict} />
       <HomeContact lang={locale} dict={dict} />
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(faqJsonLd) }}
+      />
     </>
   );
 }

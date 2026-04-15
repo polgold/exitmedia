@@ -57,6 +57,36 @@ export default async function ProjectPage({ params }: { params: PageParams }) {
     .filter((pr) => pr.slug !== info.slug)
     .slice(0, 2);
 
+  const BASE = "https://exitmedia.com.ar";
+  const projectUrl = `${BASE}/${locale}/trabajos/${meta.slug}`;
+  const projectJsonLd = {
+    "@context": "https://schema.org",
+    "@graph": [
+      {
+        "@type": "BreadcrumbList",
+        itemListElement: [
+          { "@type": "ListItem", position: 1, name: dict.metadata.siteName, item: `${BASE}/${locale}` },
+          { "@type": "ListItem", position: 2, name: dict.pageWork.label, item: `${BASE}/${locale}/trabajos` },
+          { "@type": "ListItem", position: 3, name: info.title, item: projectUrl },
+        ],
+      },
+      {
+        "@type": "CreativeWork",
+        "@id": projectUrl,
+        name: info.title,
+        headline: info.title,
+        description: info.excerpt,
+        dateCreated: meta.year,
+        inLanguage: locale === "es" ? "es-AR" : locale === "en" ? "en-US" : "pt-BR",
+        creator: { "@id": `${BASE}/#org` },
+        about: info.category,
+        keywords: [...meta.tags, ...meta.tech].join(", "),
+        ...(meta.url && { url: meta.url }),
+        ...(meta.image && { image: meta.image }),
+      },
+    ],
+  };
+
   return (
     <>
       <div className="mx-auto max-w-7xl px-6 lg:px-8 pt-10">
@@ -230,6 +260,10 @@ export default async function ProjectPage({ params }: { params: PageParams }) {
       )}
 
       <HomeContact lang={locale} dict={dict} />
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(projectJsonLd) }}
+      />
     </>
   );
 }

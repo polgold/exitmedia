@@ -69,6 +69,38 @@ export default async function PostPage({ params }: { params: PageParams }) {
     .filter((p) => p.slug !== post.slug)
     .slice(0, 2);
 
+  const BASE = "https://exitmedia.com.ar";
+  const postUrl = `${BASE}/${locale}/blog/${post.slug}`;
+  const postJsonLd = {
+    "@context": "https://schema.org",
+    "@graph": [
+      {
+        "@type": "BreadcrumbList",
+        itemListElement: [
+          { "@type": "ListItem", position: 1, name: dict.metadata.siteName, item: `${BASE}/${locale}` },
+          { "@type": "ListItem", position: 2, name: dict.pageBlog.label, item: `${BASE}/${locale}/blog` },
+          { "@type": "ListItem", position: 3, name: post.title, item: postUrl },
+        ],
+      },
+      {
+        "@type": "BlogPosting",
+        "@id": postUrl,
+        headline: post.title,
+        description: post.excerpt,
+        datePublished: post.date,
+        dateModified: post.date,
+        articleSection: post.category,
+        inLanguage: locale === "es" ? "es-AR" : locale === "en" ? "en-US" : "pt-BR",
+        author: post.author
+          ? { "@type": "Person", name: post.author }
+          : { "@type": "Organization", "@id": `${BASE}/#org` },
+        publisher: { "@id": `${BASE}/#org` },
+        mainEntityOfPage: { "@type": "WebPage", "@id": postUrl },
+        ...(post.image && { image: post.image }),
+      },
+    ],
+  };
+
   return (
     <>
       <div className="mx-auto max-w-3xl px-6 lg:px-8 pt-10">
@@ -136,6 +168,11 @@ export default async function PostPage({ params }: { params: PageParams }) {
           dangerouslySetInnerHTML={{ __html: post.contentHtml }}
         />
       </article>
+
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(postJsonLd) }}
+      />
 
       {related.length > 0 && (
         <section className="mx-auto max-w-5xl px-6 lg:px-8 pb-24 border-t border-border pt-16">
