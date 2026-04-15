@@ -17,9 +17,17 @@ type Props = {
   meta: ProjectMeta;
   info: ProjectT;
   comingSoonLabel: string;
+  headingLevel?: "h2" | "h3";
 };
 
-export function ProjectCard({ lang, meta, info, comingSoonLabel }: Props) {
+export function ProjectCard({
+  lang,
+  meta,
+  info,
+  comingSoonLabel,
+  headingLevel = "h3",
+}: Props) {
+  const Heading = headingLevel;
   const tint = tints[meta.cover] || tints.default;
 
   return (
@@ -47,9 +55,9 @@ export function ProjectCard({ lang, meta, info, comingSoonLabel }: Props) {
             <div className="text-[10px] uppercase tracking-[0.25em] opacity-80">
               {info.category} · {meta.year}
             </div>
-            <div className="mt-1 font-display text-4xl md:text-5xl leading-[1.05]">
+            <Heading className="mt-1 font-display text-4xl md:text-5xl leading-[1.05] font-normal">
               {info.title}
-            </div>
+            </Heading>
           </div>
         </div>
         {meta.status === "coming-soon" && (

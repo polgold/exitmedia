@@ -144,6 +144,19 @@ body {
   animation: marquee 40s linear infinite;
 }
 
+@media (prefers-reduced-motion: reduce) {
+  html { scroll-behavior: auto; }
+  .animate-marquee,
+  .pulse-ring {
+    animation: none;
+  }
+  *, *::before, *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+}
+
 @keyframes pulse-ring {
   0% { box-shadow: 0 0 0 0 var(--ring); }
   70% { box-shadow: 0 0 0 14px rgba(0,0,0,0); }

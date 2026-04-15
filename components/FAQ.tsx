@@ -30,36 +30,47 @@ export function FAQ({ dict }: Props) {
           <ul className="divide-y divide-border border-y border-border">
             {f.items.map((it, i) => {
               const isOpen = open === i;
+              const panelId = `faq-panel-${i}`;
+              const buttonId = `faq-button-${i}`;
               return (
-                <li key={i}>
-                  <button
-                    onClick={() => setOpen(isOpen ? null : i)}
-                    className="w-full flex items-start justify-between gap-6 py-5 text-left group"
-                    aria-expanded={isOpen}
-                  >
-                    <span className="font-display text-xl md:text-2xl leading-snug tracking-tight group-hover:text-accent transition-colors">
-                      {it.q}
-                    </span>
-                    <span
-                      className={`shrink-0 mt-1 grid place-items-center w-8 h-8 rounded-full border border-border transition-all ${
-                        isOpen ? "rotate-45 bg-accent text-background border-accent" : ""
+                  <li key={i}>
+                    <h3 className="font-normal m-0">
+                      <button
+                        id={buttonId}
+                        onClick={() => setOpen(isOpen ? null : i)}
+                        className="w-full flex items-start justify-between gap-6 py-5 text-left group"
+                        aria-expanded={isOpen}
+                        aria-controls={panelId}
+                      >
+                        <span className="font-display text-xl md:text-2xl leading-snug tracking-tight group-hover:text-accent transition-colors">
+                          {it.q}
+                        </span>
+                        <span
+                          aria-hidden
+                          className={`shrink-0 mt-1 grid place-items-center w-8 h-8 rounded-full border border-border transition-all ${
+                            isOpen ? "rotate-45 bg-accent text-background border-accent" : ""
+                          }`}
+                        >
+                          <Plus size={14} />
+                        </span>
+                      </button>
+                    </h3>
+                    <div
+                      id={panelId}
+                      role="region"
+                      aria-labelledby={buttonId}
+                      hidden={!isOpen}
+                      className={`grid transition-all duration-300 ${
+                        isOpen ? "grid-rows-[1fr] pb-5" : "grid-rows-[0fr]"
                       }`}
                     >
-                      <Plus size={14} />
-                    </span>
-                  </button>
-                  <div
-                    className={`grid transition-all duration-300 ${
-                      isOpen ? "grid-rows-[1fr] pb-5" : "grid-rows-[0fr]"
-                    }`}
-                  >
-                    <div className="overflow-hidden">
-                      <p className="text-muted max-w-2xl leading-relaxed text-pretty pr-10">
-                        {it.a}
-                      </p>
+                      <div className="overflow-hidden">
+                        <p className="text-muted max-w-2xl leading-relaxed text-pretty pr-10">
+                          {it.a}
+                        </p>
+                      </div>
                     </div>
-                  </div>
-                </li>
+                  </li>
               );
             })}
           </ul>

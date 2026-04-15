@@ -68,6 +68,7 @@ export default async function TrabajosPage({ params }: { params: PageParams }) {
                   meta={meta}
                   info={info}
                   comingSoonLabel={dict.common.comingSoon}
+                  headingLevel="h2"
                 />
               </MotionIn>
             );

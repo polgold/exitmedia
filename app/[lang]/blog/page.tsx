@@ -168,9 +168,9 @@ export default async function BlogPage({ params }: { params: PageParams }) {
                         <span>·</span>
                         <span>{formatDate(post.date, dict.readingTime.dateLocale)}</span>
                       </div>
-                      <h3 className="mt-3 font-display text-xl md:text-2xl leading-[1.12] tracking-[-0.015em] text-balance">
+                      <h2 className="mt-3 font-display text-xl md:text-2xl leading-[1.12] tracking-[-0.015em] text-balance font-normal">
                         {post.title}
-                      </h3>
+                      </h2>
                       <p className="mt-3 text-sm text-muted line-clamp-2 leading-relaxed">
                         {post.excerpt}
                       </p>

@@ -5,6 +5,7 @@ export const pt: Dictionary = {
     letTalk: "Vamos conversar",
     openMenu: "Abrir menu",
     closeMenu: "Fechar menu",
+    skipToContent: "Ir para o conteúdo",
     viewAll: "Ver todos",
     readArticle: "Ler artigo",
     read: "Ler",

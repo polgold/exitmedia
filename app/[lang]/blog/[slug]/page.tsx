@@ -175,10 +175,16 @@ export default async function PostPage({ params }: { params: PageParams }) {
       />
 
       {related.length > 0 && (
-        <section className="mx-auto max-w-5xl px-6 lg:px-8 pb-24 border-t border-border pt-16">
-          <div className="text-xs uppercase tracking-widest text-muted mb-6">
+        <section
+          aria-labelledby="related-heading"
+          className="mx-auto max-w-5xl px-6 lg:px-8 pb-24 border-t border-border pt-16"
+        >
+          <h2
+            id="related-heading"
+            className="text-xs font-normal uppercase tracking-widest text-muted mb-6"
+          >
             {pp.keepReading}
-          </div>
+          </h2>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
             {related.map((p) => {
               const t = tints[p.cover || "default"] || tints.default;
@@ -211,12 +217,13 @@ export default async function PostPage({ params }: { params: PageParams }) {
                       <div className="text-xs uppercase tracking-widest text-muted">
                         {p.category}
                       </div>
-                      <div className="font-display text-lg mt-1 line-clamp-2">
+                      <h3 className="font-display text-lg mt-1 line-clamp-2 font-normal">
                         {p.title}
-                      </div>
+                      </h3>
                     </div>
                     <ArrowUpRight
                       size={18}
+                      aria-hidden
                       className="shrink-0 text-muted group-hover:text-accent transition-colors"
                     />
                   </div>

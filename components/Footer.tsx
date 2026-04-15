@@ -52,9 +52,9 @@ export function Footer({ lang, dict }: Props) {
           </div>
 
           <div className="md:col-span-2">
-            <h4 className="text-xs uppercase tracking-widest text-muted mb-4">
+            <h2 className="text-xs font-normal uppercase tracking-widest text-muted mb-4">
               {f.studio}
-            </h4>
+            </h2>
             <ul className="space-y-2 text-sm">
               <li><Link href={`/${lang}/sobre-nosotros`} className="hover:text-accent">{dict.nav.about}</Link></li>
               <li><Link href={`/${lang}/trabajos`} className="hover:text-accent">{dict.nav.work}</Link></li>
@@ -64,9 +64,9 @@ export function Footer({ lang, dict }: Props) {
           </div>
 
           <div className="md:col-span-2">
-            <h4 className="text-xs uppercase tracking-widest text-muted mb-4">
+            <h2 className="text-xs font-normal uppercase tracking-widest text-muted mb-4">
               {f.services}
-            </h4>
+            </h2>
             <ul className="space-y-2 text-sm">
               {f.serviceLinks.map((s) => (
                 <li key={s.id}>
@@ -82,9 +82,9 @@ export function Footer({ lang, dict }: Props) {
           </div>
 
           <div className="md:col-span-3">
-            <h4 className="text-xs uppercase tracking-widest text-muted mb-4">
+            <h2 className="text-xs font-normal uppercase tracking-widest text-muted mb-4">
               {f.contact}
-            </h4>
+            </h2>
             <ul className="space-y-2 text-sm">
               <li>
                 <a href="mailto:hola@exitmedia.com.ar" className="hover:text-accent">

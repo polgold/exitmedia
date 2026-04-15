@@ -44,8 +44,12 @@ export function ContactForm({ lang, dict }: Props) {
 
   if (status === "success") {
     return (
-      <div className="rounded-2xl border border-border bg-surface-2 p-8 md:p-10 text-center">
-        <CheckCircle2 className="mx-auto text-accent" size={36} />
+      <div
+        role="status"
+        aria-live="polite"
+        className="rounded-2xl border border-border bg-surface-2 p-8 md:p-10 text-center"
+      >
+        <CheckCircle2 className="mx-auto text-accent" size={36} aria-hidden />
         <h3 className="mt-4 font-display text-3xl">{dict.successTitle}</h3>
         <p className="mt-3 text-muted max-w-md mx-auto text-pretty">
           {dict.successBody}
@@ -63,28 +67,35 @@ export function ContactForm({ lang, dict }: Props) {
   const field =
     "w-full h-12 px-4 rounded-xl bg-surface border border-border focus:outline-none focus:border-accent focus:ring-2 focus:ring-ring transition-colors";
 
+  const labelCls = "block text-xs uppercase tracking-widest text-muted mb-2";
+
   return (
-    <form onSubmit={onSubmit} className="space-y-5">
+    <form onSubmit={onSubmit} className="space-y-5" noValidate>
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
         <div>
-          <label className="block text-xs uppercase tracking-widest text-muted mb-2">
+          <label htmlFor="cf-name" className={labelCls}>
             {dict.nameLabel}
           </label>
           <input
+            id="cf-name"
             name="name"
+            type="text"
             required
+            autoComplete="name"
             placeholder={dict.namePlaceholder}
             className={field}
           />
         </div>
         <div>
-          <label className="block text-xs uppercase tracking-widest text-muted mb-2">
+          <label htmlFor="cf-email" className={labelCls}>
             {dict.emailLabel}
           </label>
           <input
+            id="cf-email"
             name="email"
             type="email"
             required
+            autoComplete="email"
             placeholder={dict.emailPlaceholder}
             className={field}
           />
@@ -93,21 +104,29 @@ export function ContactForm({ lang, dict }: Props) {
 
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
         <div>
-          <label className="block text-xs uppercase tracking-widest text-muted mb-2">
+          <label htmlFor="cf-phone" className={labelCls}>
             {dict.phoneLabel}
           </label>
           <input
+            id="cf-phone"
             name="phone"
             type="tel"
+            autoComplete="tel"
             placeholder={dict.phonePlaceholder}
             className={field}
           />
         </div>
         <div>
-          <label className="block text-xs uppercase tracking-widest text-muted mb-2">
+          <label htmlFor="cf-type" className={labelCls}>
             {dict.typeLabel}
           </label>
-          <select name="projectType" required defaultValue="" className={field}>
+          <select
+            id="cf-type"
+            name="projectType"
+            required
+            defaultValue=""
+            className={field}
+          >
             <option value="" disabled>
               {dict.typePlaceholder}
             </option>
@@ -121,10 +140,15 @@ export function ContactForm({ lang, dict }: Props) {
       </div>
 
       <div>
-        <label className="block text-xs uppercase tracking-widest text-muted mb-2">
+        <label htmlFor="cf-budget" className={labelCls}>
           {dict.budgetLabel}
         </label>
-        <select name="budget" defaultValue="" className={field}>
+        <select
+          id="cf-budget"
+          name="budget"
+          defaultValue=""
+          className={field}
+        >
           <option value="" disabled>
             {dict.budgetPlaceholder}
           </option>
@@ -137,21 +161,27 @@ export function ContactForm({ lang, dict }: Props) {
       </div>
 
       <div>
-        <label className="block text-xs uppercase tracking-widest text-muted mb-2">
+        <label htmlFor="cf-message" className={labelCls}>
           {dict.messageLabel}
         </label>
         <textarea
+          id="cf-message"
           name="message"
           required
           rows={5}
           placeholder={dict.messagePlaceholder}
+          aria-describedby={status === "error" ? "cf-error" : undefined}
           className={`${field} py-3 h-auto`}
         />
       </div>
 
       {status === "error" && (
-        <div className="flex items-center gap-2 text-sm text-red-500">
-          <AlertCircle size={16} />
+        <div
+          id="cf-error"
+          role="alert"
+          className="flex items-center gap-2 text-sm text-red-500"
+        >
+          <AlertCircle size={16} aria-hidden />
           {error}
         </div>
       )}

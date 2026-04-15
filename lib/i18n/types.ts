@@ -31,6 +31,7 @@ export type Dictionary = {
     letTalk: string;
     openMenu: string;
     closeMenu: string;
+    skipToContent: string;
     viewAll: string;
     readArticle: string;
     read: string;

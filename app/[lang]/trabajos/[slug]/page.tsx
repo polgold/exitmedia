@@ -155,7 +155,7 @@ export default async function ProjectPage({ params }: { params: PageParams }) {
                   background: `linear-gradient(180deg, ${tint} 0%, rgba(0,0,0,0.6) 100%)`,
                 }}
               />
-              <div className="absolute inset-0 flex items-end p-6">
+              <div aria-hidden className="absolute inset-0 flex items-end p-6">
                 <span className="text-white font-display text-4xl md:text-5xl leading-[1.05]">
                   {info.title}
                 </span>
@@ -169,17 +169,17 @@ export default async function ProjectPage({ params }: { params: PageParams }) {
         <MotionIn>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-10 md:gap-16">
             <div>
-              <div className="text-xs uppercase tracking-widest text-muted">
+              <h2 className="text-xs font-normal uppercase tracking-widest text-muted">
                 {p.challenge}
-              </div>
+              </h2>
               <p className="mt-5 text-lg leading-relaxed text-pretty">
                 {info.challenge}
               </p>
             </div>
             <div>
-              <div className="text-xs uppercase tracking-widest text-muted">
+              <h2 className="text-xs font-normal uppercase tracking-widest text-muted">
                 {p.solution}
-              </div>
+              </h2>
               <p className="mt-5 text-lg leading-relaxed text-pretty">
                 {info.solution}
               </p>
@@ -189,9 +189,9 @@ export default async function ProjectPage({ params }: { params: PageParams }) {
 
         <MotionIn delay={0.1}>
           <div className="mt-16 md:mt-24 rounded-2xl border border-border bg-surface p-6 md:p-8">
-            <div className="text-xs uppercase tracking-widest text-muted mb-5">
+            <h2 className="text-xs font-normal uppercase tracking-widest text-muted mb-5">
               {p.tech}
-            </div>
+            </h2>
             <ul className="flex flex-wrap gap-2">
               {meta.tech.map((t) => (
                 <li
@@ -207,10 +207,16 @@ export default async function ProjectPage({ params }: { params: PageParams }) {
       </section>
 
       {otherProjects.length > 0 && (
-        <section className="mx-auto max-w-7xl px-6 lg:px-8 pb-10 border-t border-border pt-16">
-          <div className="text-xs uppercase tracking-widest text-muted mb-6">
+        <section
+          aria-labelledby="other-projects-heading"
+          className="mx-auto max-w-7xl px-6 lg:px-8 pb-10 border-t border-border pt-16"
+        >
+          <h2
+            id="other-projects-heading"
+            className="text-xs font-normal uppercase tracking-widest text-muted mb-6"
+          >
             {p.otherProjects}
-          </div>
+          </h2>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
             {otherProjects.map((op) => {
               const ometa = getProjectMeta(op.slug);
@@ -238,9 +244,9 @@ export default async function ProjectPage({ params }: { params: PageParams }) {
                       }}
                     />
                     <div className="absolute inset-0 flex items-end p-5">
-                      <span className="text-white font-display text-3xl md:text-4xl leading-[1.05]">
+                      <h3 className="text-white font-display text-3xl md:text-4xl leading-[1.05] font-normal">
                         {op.title}
-                      </span>
+                      </h3>
                     </div>
                   </div>
                   <div className="p-5 flex items-center justify-between">
@@ -249,6 +255,7 @@ export default async function ProjectPage({ params }: { params: PageParams }) {
                     </div>
                     <ArrowUpRight
                       size={18}
+                      aria-hidden
                       className="text-muted group-hover:text-accent transition-colors"
                     />
                   </div>

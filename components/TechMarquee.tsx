@@ -20,7 +20,10 @@ const tech = [
 export function TechMarquee() {
   const items = [...tech, ...tech];
   return (
-    <section className="border-y border-border py-6 bg-surface-2/40 overflow-hidden">
+    <section
+      aria-hidden
+      className="border-y border-border py-6 bg-surface-2/40 overflow-hidden"
+    >
       <div className="flex animate-marquee whitespace-nowrap gap-10 will-change-transform">
         {items.map((t, i) => (
           <span
