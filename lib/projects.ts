@@ -45,6 +45,7 @@ export const projectMeta: ProjectMeta[] = [
     cover: "storemcp",
     image:
       "https://images.unsplash.com/photo-1677442136019-21780ecad995?w=1600&q=80&auto=format&fit=crop",
+    url: "https://storemcp.io",
     status: "coming-soon",
     tags: ["MCP", "WordPress", "WooCommerce", "AI"],
     tech: [
