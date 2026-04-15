@@ -1,8 +1,18 @@
 import Link from "next/link";
+import type { Locale } from "@/lib/i18n/config";
 
-export function Logo({ className = "" }: { className?: string }) {
+export function Logo({
+  lang,
+  className = "",
+}: {
+  lang: Locale;
+  className?: string;
+}) {
   return (
-    <Link href="/" className={`inline-flex items-center gap-2 group ${className}`}>
+    <Link
+      href={`/${lang}`}
+      className={`inline-flex items-center gap-2 group ${className}`}
+    >
       <span
         aria-hidden
         className="relative inline-grid place-items-center w-8 h-8 rounded-lg bg-foreground text-background font-display text-lg leading-none transition-transform group-hover:rotate-6"

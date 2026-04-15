@@ -1,40 +1,47 @@
 import type { Metadata } from "next";
 import Image from "next/image";
 import Link from "next/link";
+import { notFound } from "next/navigation";
 import { MotionIn } from "@/components/ui/MotionIn";
-import { Zap, Eye, Gauge, Bot, ArrowUpRight } from "lucide-react";
+import { Zap, Eye, Gauge, Bot, ArrowUpRight, type LucideIcon } from "lucide-react";
 import { HomeContact } from "@/components/HomeContact";
+import { getDictionary } from "@/lib/i18n/dictionaries";
+import { isLocale, type Locale } from "@/lib/i18n/config";
 
-export const metadata: Metadata = {
-  title: "Sobre nosotros — ExitMedia, estudio digital de Buenos Aires",
-  description:
-    "ExitMedia es la división digital de Sun Factory. Cruzamos cine, diseño y código con IA como motor de desarrollo.",
+type PageParams = Promise<{ lang: string }>;
+
+const valueIcons: Record<string, LucideIcon> = {
+  speed: Zap,
+  clarity: Eye,
+  quality: Gauge,
+  ai: Bot,
 };
 
-const values = [
-  {
-    icon: Zap,
-    title: "Velocidad",
-    body: "Preferimos entregar algo bueno esta semana que algo perfecto el año que viene. La realidad siempre te corrige — dejémosla que corrija rápido.",
-  },
-  {
-    icon: Eye,
-    title: "Claridad",
-    body: "Presupuestos cerrados, plazos reales, sin lenguaje inflado. Si no entendés algo, es culpa nuestra — no tuya.",
-  },
-  {
-    icon: Gauge,
-    title: "Calidad",
-    body: "Rápido no significa descuidado. Cada sitio que hacemos tiene performance, SEO y accesibilidad mínimas no negociables.",
-  },
-  {
-    icon: Bot,
-    title: "AI-first",
-    body: "Usamos IA como motor, no como gimmick. Eso significa entregas más rápidas, más accesibles y más tiempo para pensar estrategia y diseño.",
-  },
-];
+export async function generateMetadata({
+  params,
+}: {
+  params: PageParams;
+}): Promise<Metadata> {
+  const { lang } = await params;
+  if (!isLocale(lang)) return {};
+  const dict = await getDictionary(lang);
+  return {
+    title: dict.pageAbout.title,
+    description: dict.pageAbout.description,
+  };
+}
 
-export default function SobreNosotrosPage() {
+export default async function SobreNosotrosPage({
+  params,
+}: {
+  params: PageParams;
+}) {
+  const { lang } = await params;
+  if (!isLocale(lang)) notFound();
+  const locale = lang as Locale;
+  const dict = await getDictionary(locale);
+  const a = dict.pageAbout;
+
   return (
     <>
       <section className="relative overflow-hidden border-b border-border">
@@ -49,13 +56,15 @@ export default function SobreNosotrosPage() {
         <div className="mx-auto max-w-7xl px-6 lg:px-8 pt-20 md:pt-28 pb-20">
           <div className="inline-flex items-center gap-2 text-xs uppercase tracking-[0.18em] text-muted">
             <span className="w-6 h-px bg-accent" />
-            Sobre nosotros
+            {a.label}
           </div>
           <h1 className="font-display text-[clamp(2.75rem,6.8vw,5.5rem)] leading-[1.02] tracking-[-0.02em] mt-6 text-balance max-w-4xl">
-            Nacimos del cruce entre <span className="italic text-accent">cine</span> y tecnología.
+            {a.heroPrefix}
+            <span className="italic text-accent">{a.heroHighlight}</span>
+            {a.heroSuffix}
           </h1>
           <p className="mt-10 text-xl text-muted leading-relaxed text-pretty max-w-3xl">
-            ExitMedia es la división digital de{" "}
+            {a.heroIntroPrefix}
             <a
               href="https://sunfactory.com.ar"
               target="_blank"
@@ -64,10 +73,7 @@ export default function SobreNosotrosPage() {
             >
               Sun Factory
             </a>
-            , una productora de cine y contenidos comerciales que trabaja hace
-            más de una década en Buenos Aires. De un lado, sabemos cómo se
-            cuenta una historia. Del otro, cómo se construye la infraestructura
-            que la distribuye.
+            {a.heroIntroSuffix}
           </p>
         </div>
       </section>
@@ -78,7 +84,7 @@ export default function SobreNosotrosPage() {
             <div className="relative aspect-[4/5] rounded-2xl border border-border overflow-hidden bg-surface">
               <Image
                 src="https://images.unsplash.com/photo-1497366811353-6870744d04b2?w=1200&q=80&auto=format&fit=crop"
-                alt="Equipo trabajando en un estudio de diseño"
+                alt={a.imageAltTeam}
                 fill
                 className="object-cover"
                 sizes="(max-width: 1024px) 100vw, 40vw"
@@ -93,10 +99,10 @@ export default function SobreNosotrosPage() {
               />
               <div className="absolute bottom-6 left-6 right-6 text-white">
                 <div className="text-xs uppercase tracking-[0.2em] opacity-80">
-                  Estudio
+                  {a.studioTag}
                 </div>
                 <div className="font-display text-2xl mt-1 leading-tight">
-                  Buenos Aires, Argentina
+                  {a.studioCity}
                 </div>
               </div>
             </div>
@@ -105,29 +111,12 @@ export default function SobreNosotrosPage() {
           <div className="lg:col-span-7">
             <MotionIn>
               <div className="text-xs uppercase tracking-widest text-muted">
-                Cómo llegamos acá
+                {a.howWeGotHereLabel}
               </div>
               <div className="mt-5 space-y-5 text-lg leading-relaxed text-pretty">
-                <p>
-                  Somos un estudio chico, con raíces en el cine. Durante más de
-                  una década, Sun Factory dirigió y produjo contenido comercial
-                  para marcas de Argentina, EE.UU., España y México.
-                </p>
-                <p>
-                  En algún momento, muchos clientes empezaron a pedir también
-                  "el sitio, la tienda, la landing". Al principio lo derivábamos
-                  a agencias que nos gustaban. Con los años, vimos que los
-                  resultados dependían cada vez más de si quien estaba del otro
-                  lado entendía el negocio del cliente — no solo el código.
-                </p>
-                <p>
-                  ExitMedia nace de ese cruce. Somos un estudio que usa IA como
-                  motor de desarrollo (Claude Code, Cursor, MCP) para entregar
-                  más rápido y a mejor precio. Pero el criterio, el diseño y la
-                  conversación con el cliente son humanos, y vienen de años de
-                  trabajar con marcas que confían en nosotros para contar su
-                  historia.
-                </p>
+                {a.paragraphs.map((p, i) => (
+                  <p key={i}>{p}</p>
+                ))}
               </div>
             </MotionIn>
           </div>
@@ -138,17 +127,17 @@ export default function SobreNosotrosPage() {
         <div className="mx-auto max-w-7xl px-6 lg:px-8">
           <div className="inline-flex items-center gap-2 text-xs uppercase tracking-[0.18em] text-muted">
             <span className="w-6 h-px bg-accent" />
-            Nuestros valores
+            {a.valuesLabel}
           </div>
           <h2 className="mt-4 font-display text-4xl md:text-5xl lg:text-6xl leading-[1.05] tracking-[-0.015em] text-balance max-w-3xl">
-            Cuatro cosas en las que no transamos.
+            {a.valuesTitle}
           </h2>
 
           <div className="mt-14 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-px bg-border rounded-2xl overflow-hidden border border-border">
-            {values.map((v, i) => {
-              const Icon = v.icon;
+            {a.values.map((v, i) => {
+              const Icon = valueIcons[v.id] || Zap;
               return (
-                <MotionIn key={v.title} delay={i * 0.06}>
+                <MotionIn key={v.id} delay={i * 0.06}>
                   <div className="h-full bg-background p-7">
                     <span className="inline-grid place-items-center w-10 h-10 rounded-lg border border-border text-accent bg-surface">
                       <Icon size={18} />
@@ -170,16 +159,20 @@ export default function SobreNosotrosPage() {
           <div className="lg:col-span-5">
             <div className="inline-flex items-center gap-2 text-xs uppercase tracking-[0.18em] text-muted">
               <span className="w-6 h-px bg-accent" />
-              Nuestro approach
+              {a.approachLabel}
             </div>
             <h2 className="mt-4 font-display text-4xl md:text-5xl leading-[1.05] tracking-[-0.015em] text-balance">
-              AI como motor, no como <span className="italic text-accent">gimmick</span>.
+              {a.approachTitlePrefix}
+              <span className="italic text-accent">
+                {a.approachTitleHighlight}
+              </span>
+              {a.approachTitleSuffix}
             </h2>
 
             <div className="mt-8 relative aspect-[4/3] rounded-2xl overflow-hidden border border-border">
               <Image
                 src="https://images.unsplash.com/photo-1517694712202-14dd9538aa97?w=1200&q=80&auto=format&fit=crop"
-                alt="Desarrollo de software con IA"
+                alt={a.imageAltAI}
                 fill
                 className="object-cover"
                 sizes="(max-width: 1024px) 100vw, 40vw"
@@ -187,40 +180,25 @@ export default function SobreNosotrosPage() {
             </div>
           </div>
           <div className="lg:col-span-7 text-lg leading-relaxed text-pretty space-y-5">
-            <p>
-              Usamos Claude Code y Cursor para escribir buena parte de cada
-              proyecto. Eso significa que un sitio que antes requería 4 semanas
-              y 3 perfiles, hoy lo armamos en 2 con el mismo nivel de cuidado.
-              No es magia — es dejar que la herramienta haga lo mecánico para
-              concentrarnos en lo que requiere criterio.
-            </p>
-            <p>Lo traducimos en tres cosas concretas que vas a ver:</p>
+            {a.approachParagraphs.map((p, i) => (
+              <p key={i}>{p}</p>
+            ))}
             <ul className="space-y-3 pl-5">
-              <li className="list-disc">
-                <strong>Presupuestos más accesibles.</strong> Lo que antes era
-                un proyecto de USD 8.000 hoy puede ser uno de USD 2.500.
-              </li>
-              <li className="list-disc">
-                <strong>Iteraciones más rápidas.</strong> Cambios y pruebas en
-                horas, no en semanas.
-              </li>
-              <li className="list-disc">
-                <strong>Más tiempo para pensar.</strong> Que es para lo que nos
-                contratás, no para que escribamos CSS.
-              </li>
+              {a.approachBullets.map((b, i) => (
+                <li key={i} className="list-disc">
+                  <strong>{b.strong}</strong>
+                  {b.rest}
+                </li>
+              ))}
             </ul>
-            <p>
-              No vamos a dejar que un modelo mande un sitio a producción sin
-              revisión humana. Pero tampoco vamos a fingir que no existen. Esa
-              es la línea.
-            </p>
+            <p>{a.approachFooter}</p>
 
             <div className="pt-6">
               <Link
-                href="/servicios"
+                href={`/${locale}/servicios`}
                 className="group inline-flex items-center gap-2 text-accent hover:text-accent-hover"
               >
-                Ver qué podemos hacer
+                {a.approachCta}
                 <ArrowUpRight
                   size={16}
                   className="transition-transform group-hover:-translate-y-0.5 group-hover:translate-x-0.5"
@@ -231,7 +209,7 @@ export default function SobreNosotrosPage() {
         </div>
       </section>
 
-      <HomeContact />
+      <HomeContact lang={locale} dict={dict} />
     </>
   );
 }

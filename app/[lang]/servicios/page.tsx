@@ -1,17 +1,36 @@
 import type { Metadata } from "next";
 import Link from "next/link";
-import { services } from "@/lib/services";
+import { notFound } from "next/navigation";
+import { getServiceIcon } from "@/lib/services";
 import { MotionIn } from "@/components/ui/MotionIn";
 import { Check, ArrowRight } from "lucide-react";
 import { HomeContact } from "@/components/HomeContact";
+import { getDictionary } from "@/lib/i18n/dictionaries";
+import { isLocale, type Locale } from "@/lib/i18n/config";
 
-export const metadata: Metadata = {
-  title: "Servicios — Desarrollo web, e-commerce, apps y AI",
-  description:
-    "Todo lo que hacemos en ExitMedia: sitios web, tiendas online, aplicaciones, IA aplicada, WordPress, branding, SEO, hosting, consultoría y mantenimiento.",
-};
+type PageParams = Promise<{ lang: string }>;
 
-export default function ServiciosPage() {
+export async function generateMetadata({
+  params,
+}: {
+  params: PageParams;
+}): Promise<Metadata> {
+  const { lang } = await params;
+  if (!isLocale(lang)) return {};
+  const dict = await getDictionary(lang);
+  return {
+    title: dict.pageServices.title,
+    description: dict.pageServices.description,
+  };
+}
+
+export default async function ServiciosPage({ params }: { params: PageParams }) {
+  const { lang } = await params;
+  if (!isLocale(lang)) notFound();
+  const locale = lang as Locale;
+  const dict = await getDictionary(locale);
+  const p = dict.pageServices;
+
   return (
     <>
       <section className="relative overflow-hidden border-b border-border">
@@ -26,19 +45,19 @@ export default function ServiciosPage() {
         <div className="mx-auto max-w-7xl px-6 lg:px-8 pt-20 md:pt-28 pb-16 md:pb-20">
           <div className="inline-flex items-center gap-2 text-xs uppercase tracking-[0.18em] text-muted">
             <span className="w-6 h-px bg-accent" />
-            Servicios
+            {p.label}
           </div>
           <h1 className="font-display text-[clamp(3rem,6.5vw,5.5rem)] leading-[0.98] tracking-tight mt-6 text-balance max-w-4xl">
-            Todo lo que hacemos, <span className="italic text-accent">en detalle</span>.
+            {p.heroPrefix}
+            <span className="italic text-accent">{p.heroHighlight}</span>
+            {p.heroSuffix}
           </h1>
           <p className="mt-8 text-lg md:text-xl text-muted max-w-2xl leading-relaxed text-pretty">
-            Desde una landing de un día hasta operaciones complejas con
-            integraciones a medida. Elegimos la herramienta según el problema,
-            no al revés.
+            {p.intro}
           </p>
 
           <nav className="mt-12 flex flex-wrap gap-2">
-            {services.map((s) => (
+            {dict.services.map((s) => (
               <Link
                 key={s.id}
                 href={`#${s.id}`}
@@ -52,8 +71,8 @@ export default function ServiciosPage() {
       </section>
 
       <div className="mx-auto max-w-7xl px-6 lg:px-8">
-        {services.map((svc, idx) => {
-          const Icon = svc.icon;
+        {dict.services.map((svc, idx) => {
+          const Icon = getServiceIcon(svc.id);
           const reverse = idx % 2 === 1;
           return (
             <section
@@ -73,7 +92,8 @@ export default function ServiciosPage() {
                         <Icon size={20} />
                       </span>
                       <span className="text-xs font-mono uppercase tracking-widest text-muted">
-                        {String(idx + 1).padStart(2, "0")} / {String(services.length).padStart(2, "0")}
+                        {String(idx + 1).padStart(2, "0")} /{" "}
+                        {String(dict.services.length).padStart(2, "0")}
                       </span>
                     </div>
                     <h2 className="mt-6 font-display text-4xl md:text-5xl leading-[1.05] tracking-tight text-balance">
@@ -86,10 +106,10 @@ export default function ServiciosPage() {
                       {svc.short}
                     </p>
                     <Link
-                      href="/contacto"
+                      href={`/${locale}/contacto`}
                       className="mt-8 inline-flex items-center gap-2 text-sm text-accent hover:text-accent-hover group"
                     >
-                      Conversemos sobre este servicio
+                      {p.ctaService}
                       <ArrowRight
                         size={14}
                         className="transition-transform group-hover:translate-x-0.5"
@@ -100,7 +120,7 @@ export default function ServiciosPage() {
                   <div className="lg:col-span-7">
                     <div className="rounded-2xl border border-border bg-surface p-6 md:p-8">
                       <div className="text-xs uppercase tracking-widest text-muted mb-4">
-                        Incluye
+                        {dict.common.includes}
                       </div>
                       <ul className="grid grid-cols-1 sm:grid-cols-2 gap-x-6 gap-y-3">
                         {svc.items.map((it) => (
@@ -124,7 +144,7 @@ export default function ServiciosPage() {
         })}
       </div>
 
-      <HomeContact />
+      <HomeContact lang={locale} dict={dict} />
     </>
   );
 }

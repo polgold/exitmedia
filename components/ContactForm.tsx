@@ -2,27 +2,17 @@
 
 import { useState } from "react";
 import { Send, CheckCircle2, AlertCircle } from "lucide-react";
+import type { Locale } from "@/lib/i18n/config";
+import type { Dictionary } from "@/lib/i18n/types";
 
 type Status = "idle" | "loading" | "success" | "error";
 
-const projectTypes = [
-  "Sitio web",
-  "Tienda online",
-  "App",
-  "Consultoría",
-  "Mantenimiento",
-  "Otro",
-];
+type Props = {
+  lang: Locale;
+  dict: Dictionary["contactForm"];
+};
 
-const budgets = [
-  "Menos de USD 500",
-  "USD 500 — 1.500",
-  "USD 1.500 — 5.000",
-  "USD 5.000+",
-  "No sé todavía",
-];
-
-export function ContactForm() {
+export function ContactForm({ lang, dict }: Props) {
   const [status, setStatus] = useState<Status>("idle");
   const [error, setError] = useState<string | null>(null);
 
@@ -38,17 +28,17 @@ export function ContactForm() {
       const res = await fetch("/api/contact", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(data),
+        body: JSON.stringify({ ...data, locale: lang }),
       });
       if (!res.ok) {
         const body = await res.json().catch(() => ({}));
-        throw new Error(body.error || "Algo falló. Probá de nuevo.");
+        throw new Error(body.error || dict.errorGeneric);
       }
       setStatus("success");
       form.reset();
     } catch (err) {
       setStatus("error");
-      setError(err instanceof Error ? err.message : "Error desconocido");
+      setError(err instanceof Error ? err.message : dict.errorUnknown);
     }
   }
 
@@ -56,16 +46,15 @@ export function ContactForm() {
     return (
       <div className="rounded-2xl border border-border bg-surface-2 p-8 md:p-10 text-center">
         <CheckCircle2 className="mx-auto text-accent" size={36} />
-        <h3 className="mt-4 font-display text-3xl">¡Gracias!</h3>
+        <h3 className="mt-4 font-display text-3xl">{dict.successTitle}</h3>
         <p className="mt-3 text-muted max-w-md mx-auto text-pretty">
-          Recibimos tu mensaje. Te escribimos en menos de 24 horas hábiles —
-          normalmente el mismo día.
+          {dict.successBody}
         </p>
         <button
           onClick={() => setStatus("idle")}
           className="mt-6 text-sm text-muted hover:text-accent underline underline-offset-4"
         >
-          Enviar otro mensaje
+          {dict.successReset}
         </button>
       </div>
     );
@@ -79,19 +68,24 @@ export function ContactForm() {
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
         <div>
           <label className="block text-xs uppercase tracking-widest text-muted mb-2">
-            Nombre *
+            {dict.nameLabel}
           </label>
-          <input name="name" required placeholder="Tu nombre" className={field} />
+          <input
+            name="name"
+            required
+            placeholder={dict.namePlaceholder}
+            className={field}
+          />
         </div>
         <div>
           <label className="block text-xs uppercase tracking-widest text-muted mb-2">
-            Email *
+            {dict.emailLabel}
           </label>
           <input
             name="email"
             type="email"
             required
-            placeholder="vos@tudominio.com"
+            placeholder={dict.emailPlaceholder}
             className={field}
           />
         </div>
@@ -100,24 +94,24 @@ export function ContactForm() {
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
         <div>
           <label className="block text-xs uppercase tracking-widest text-muted mb-2">
-            Teléfono / WhatsApp
+            {dict.phoneLabel}
           </label>
           <input
             name="phone"
             type="tel"
-            placeholder="+54 9 11 ..."
+            placeholder={dict.phonePlaceholder}
             className={field}
           />
         </div>
         <div>
           <label className="block text-xs uppercase tracking-widest text-muted mb-2">
-            Tipo de proyecto *
+            {dict.typeLabel}
           </label>
           <select name="projectType" required defaultValue="" className={field}>
             <option value="" disabled>
-              Elegí una opción
+              {dict.typePlaceholder}
             </option>
-            {projectTypes.map((t) => (
+            {dict.types.map((t) => (
               <option key={t} value={t}>
                 {t}
               </option>
@@ -128,13 +122,13 @@ export function ContactForm() {
 
       <div>
         <label className="block text-xs uppercase tracking-widest text-muted mb-2">
-          Presupuesto estimado
+          {dict.budgetLabel}
         </label>
         <select name="budget" defaultValue="" className={field}>
           <option value="" disabled>
-            Elegí un rango
+            {dict.budgetPlaceholder}
           </option>
-          {budgets.map((b) => (
+          {dict.budgets.map((b) => (
             <option key={b} value={b}>
               {b}
             </option>
@@ -144,13 +138,13 @@ export function ContactForm() {
 
       <div>
         <label className="block text-xs uppercase tracking-widest text-muted mb-2">
-          Contanos de tu proyecto *
+          {dict.messageLabel}
         </label>
         <textarea
           name="message"
           required
           rows={5}
-          placeholder="Qué necesitás, para cuándo, qué tenés armado hasta ahora…"
+          placeholder={dict.messagePlaceholder}
           className={`${field} py-3 h-auto`}
         />
       </div>
@@ -168,11 +162,11 @@ export function ContactForm() {
           disabled={status === "loading"}
           className="inline-flex items-center gap-2 h-12 px-6 rounded-full bg-foreground text-background font-medium hover:bg-accent transition-colors disabled:opacity-60"
         >
-          {status === "loading" ? "Enviando..." : "Enviar mensaje"}
+          {status === "loading" ? dict.submitting : dict.submit}
           <Send size={16} />
         </button>
         <span className="text-sm text-muted">
-          o escribinos a{" "}
+          {dict.altContactPrefix}{" "}
           <a
             href="https://wa.me/5491136511204"
             className="text-foreground hover:text-accent"

@@ -5,8 +5,9 @@ import { remark } from "remark";
 import gfm from "remark-gfm";
 import html from "remark-html";
 import readingTime from "reading-time";
+import type { Locale } from "./i18n/config";
 
-const POSTS_DIR = path.join(process.cwd(), "content", "blog");
+const BLOG_ROOT = path.join(process.cwd(), "content", "blog");
 
 export type PostFrontmatter = {
   title: string;
@@ -28,44 +29,60 @@ export type Post = PostMeta & {
   contentHtml: string;
 };
 
-export function getAllPostSlugs(): string[] {
-  if (!fs.existsSync(POSTS_DIR)) return [];
+type ReadingTimeT = { suffix: string };
+
+function postsDir(lang: Locale) {
+  return path.join(BLOG_ROOT, lang);
+}
+
+export function getAllPostSlugs(lang: Locale): string[] {
+  const dir = postsDir(lang);
+  if (!fs.existsSync(dir)) return [];
   return fs
-    .readdirSync(POSTS_DIR)
+    .readdirSync(dir)
     .filter((f) => f.endsWith(".md") || f.endsWith(".mdx"))
     .map((f) => f.replace(/\.mdx?$/, ""));
 }
 
-function readPost(slug: string) {
-  const mdx = path.join(POSTS_DIR, `${slug}.mdx`);
-  const md = path.join(POSTS_DIR, `${slug}.md`);
+function readPost(lang: Locale, slug: string) {
+  const dir = postsDir(lang);
+  const mdx = path.join(dir, `${slug}.mdx`);
+  const md = path.join(dir, `${slug}.md`);
   const file = fs.existsSync(mdx) ? mdx : md;
   const raw = fs.readFileSync(file, "utf8");
   const { data, content } = matter(raw);
   return { data: data as PostFrontmatter, content };
 }
 
-export function getAllPostsMeta(): PostMeta[] {
-  const slugs = getAllPostSlugs();
+function formatReadingTime(content: string, rt: ReadingTimeT) {
+  return readingTime(content).text.replace("min read", rt.suffix);
+}
+
+export function getAllPostsMeta(lang: Locale, rt: ReadingTimeT): PostMeta[] {
+  const slugs = getAllPostSlugs(lang);
   const posts = slugs.map((slug) => {
-    const { data, content } = readPost(slug);
+    const { data, content } = readPost(lang, slug);
     return {
       slug,
       ...data,
-      readingTime: readingTime(content).text.replace("min read", "min de lectura"),
+      readingTime: formatReadingTime(content, rt),
     };
   });
   return posts.sort((a, b) => (a.date < b.date ? 1 : -1));
 }
 
-export async function getPostBySlug(slug: string): Promise<Post | null> {
+export async function getPostBySlug(
+  lang: Locale,
+  slug: string,
+  rt: ReadingTimeT,
+): Promise<Post | null> {
   try {
-    const { data, content } = readPost(slug);
+    const { data, content } = readPost(lang, slug);
     const processed = await remark().use(gfm).use(html).process(content);
     return {
       slug,
       ...data,
-      readingTime: readingTime(content).text.replace("min read", "min de lectura"),
+      readingTime: formatReadingTime(content, rt),
       contentHtml: processed.toString(),
     };
   } catch {

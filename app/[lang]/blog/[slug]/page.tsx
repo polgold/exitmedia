@@ -4,17 +4,29 @@ import Link from "next/link";
 import { notFound } from "next/navigation";
 import { getAllPostSlugs, getAllPostsMeta, getPostBySlug } from "@/lib/blog";
 import { ArrowLeft, ArrowUpRight } from "lucide-react";
+import { getDictionary } from "@/lib/i18n/dictionaries";
+import { locales, isLocale, type Locale } from "@/lib/i18n/config";
 
-type Params = Promise<{ slug: string }>;
+type PageParams = Promise<{ lang: string; slug: string }>;
 
 export function generateStaticParams() {
-  return getAllPostSlugs().map((slug) => ({ slug }));
+  const out: { lang: string; slug: string }[] = [];
+  for (const lang of locales) {
+    for (const slug of getAllPostSlugs(lang)) out.push({ lang, slug });
+  }
+  return out;
 }
 
-export async function generateMetadata({ params }: { params: Params }): Promise<Metadata> {
-  const { slug } = await params;
-  const post = await getPostBySlug(slug);
-  if (!post) return { title: "Nota no encontrada" };
+export async function generateMetadata({
+  params,
+}: {
+  params: PageParams;
+}): Promise<Metadata> {
+  const { lang, slug } = await params;
+  if (!isLocale(lang)) return {};
+  const dict = await getDictionary(lang);
+  const post = await getPostBySlug(lang, slug, dict.readingTime);
+  if (!post) return { title: dict.pageBlog.notFoundTitle };
   return {
     title: post.title,
     description: post.excerpt,
@@ -28,14 +40,6 @@ export async function generateMetadata({ params }: { params: Params }): Promise<
   };
 }
 
-function formatDate(d: string) {
-  return new Date(d).toLocaleDateString("es-AR", {
-    day: "numeric",
-    month: "long",
-    year: "numeric",
-  });
-}
-
 const tints: Record<string, string> = {
   mcp: "rgba(17, 19, 24, 0.45)",
   platforms: "rgba(26, 58, 92, 0.45)",
@@ -43,13 +47,25 @@ const tints: Record<string, string> = {
   default: "rgba(20, 20, 20, 0.45)",
 };
 
-export default async function PostPage({ params }: { params: Params }) {
-  const { slug } = await params;
-  const post = await getPostBySlug(slug);
+function formatDate(d: string, dateLocale: string) {
+  return new Date(d).toLocaleDateString(dateLocale, {
+    day: "numeric",
+    month: "long",
+    year: "numeric",
+  });
+}
+
+export default async function PostPage({ params }: { params: PageParams }) {
+  const { lang, slug } = await params;
+  if (!isLocale(lang)) notFound();
+  const locale = lang as Locale;
+  const dict = await getDictionary(locale);
+  const post = await getPostBySlug(locale, slug, dict.readingTime);
   if (!post) notFound();
 
+  const pp = dict.pagePost;
   const tint = tints[post.cover || "default"] || tints.default;
-  const related = getAllPostsMeta()
+  const related = getAllPostsMeta(locale, dict.readingTime)
     .filter((p) => p.slug !== post.slug)
     .slice(0, 2);
 
@@ -57,10 +73,10 @@ export default async function PostPage({ params }: { params: Params }) {
     <>
       <div className="mx-auto max-w-3xl px-6 lg:px-8 pt-10">
         <Link
-          href="/blog"
+          href={`/${locale}/blog`}
           className="inline-flex items-center gap-2 text-sm text-muted hover:text-accent"
         >
-          <ArrowLeft size={14} /> Volver al blog
+          <ArrowLeft size={14} /> {pp.backToBlog}
         </Link>
       </div>
 
@@ -70,7 +86,9 @@ export default async function PostPage({ params }: { params: Params }) {
           <span>·</span>
           <span>{post.readingTime}</span>
           <span>·</span>
-          <time dateTime={post.date}>{formatDate(post.date)}</time>
+          <time dateTime={post.date}>
+            {formatDate(post.date, dict.readingTime.dateLocale)}
+          </time>
         </div>
 
         <h1 className="font-display text-[clamp(2.25rem,5vw,4rem)] leading-[1.05] tracking-[-0.02em] mt-5 text-balance">
@@ -88,7 +106,7 @@ export default async function PostPage({ params }: { params: Params }) {
             </span>
             <div className="text-sm">
               <div className="font-medium">{post.author}</div>
-              <div className="text-muted text-xs">ExitMedia · Buenos Aires</div>
+              <div className="text-muted text-xs">{pp.authorOrg}</div>
             </div>
           </div>
         )}
@@ -122,7 +140,7 @@ export default async function PostPage({ params }: { params: Params }) {
       {related.length > 0 && (
         <section className="mx-auto max-w-5xl px-6 lg:px-8 pb-24 border-t border-border pt-16">
           <div className="text-xs uppercase tracking-widest text-muted mb-6">
-            Seguí leyendo
+            {pp.keepReading}
           </div>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
             {related.map((p) => {
@@ -130,7 +148,7 @@ export default async function PostPage({ params }: { params: Params }) {
               return (
                 <Link
                   key={p.slug}
-                  href={`/blog/${p.slug}`}
+                  href={`/${locale}/blog/${p.slug}`}
                   className="group rounded-2xl border border-border overflow-hidden hover:border-accent/60 transition-colors bg-surface"
                 >
                   {p.image && (

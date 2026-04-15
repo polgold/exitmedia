@@ -6,18 +6,26 @@ import { useEffect, useState } from "react";
 import { Menu, X } from "lucide-react";
 import { Logo } from "./Logo";
 import { ThemeToggle } from "./ThemeToggle";
+import { LanguageSwitcher } from "./LanguageSwitcher";
+import type { Locale } from "@/lib/i18n/config";
+import type { Dictionary } from "@/lib/i18n/types";
 
-const nav = [
-  { href: "/servicios", label: "Servicios" },
-  { href: "/trabajos", label: "Trabajos" },
-  { href: "/blog", label: "Blog" },
-  { href: "/sobre-nosotros", label: "Nosotros" },
-];
+type Props = {
+  lang: Locale;
+  dict: Pick<Dictionary, "nav" | "common" | "languageSwitcher">;
+};
 
-export function Header() {
+export function Header({ lang, dict }: Props) {
   const pathname = usePathname();
   const [scrolled, setScrolled] = useState(false);
   const [open, setOpen] = useState(false);
+
+  const nav = [
+    { href: `/${lang}/servicios`, label: dict.nav.services },
+    { href: `/${lang}/trabajos`, label: dict.nav.work },
+    { href: `/${lang}/blog`, label: dict.nav.blog },
+    { href: `/${lang}/sobre-nosotros`, label: dict.nav.about },
+  ];
 
   useEffect(() => {
     const onScroll = () => setScrolled(window.scrollY > 12);
@@ -39,11 +47,12 @@ export function Header() {
       }`}
     >
       <div className="mx-auto max-w-7xl px-6 lg:px-8 h-16 flex items-center justify-between">
-        <Logo />
+        <Logo lang={lang} />
 
         <nav className="hidden md:flex items-center gap-1">
           {nav.map((item) => {
-            const active = pathname === item.href || pathname.startsWith(item.href + "/");
+            const active =
+              pathname === item.href || pathname.startsWith(item.href + "/");
             return (
               <Link
                 key={item.href}
@@ -64,17 +73,22 @@ export function Header() {
         </nav>
 
         <div className="flex items-center gap-2">
+          <LanguageSwitcher
+            current={lang}
+            options={dict.languageSwitcher.options}
+            label={dict.languageSwitcher.label}
+          />
           <ThemeToggle />
           <Link
-            href="/contacto"
+            href={`/${lang}/contacto`}
             className="hidden md:inline-flex items-center gap-1.5 h-9 px-4 rounded-full bg-foreground text-background text-sm font-medium hover:bg-accent hover:text-background transition-colors"
           >
-            Hablemos
+            {dict.common.letTalk}
             <span aria-hidden>→</span>
           </Link>
           <button
             className="md:hidden w-9 h-9 grid place-items-center rounded-full border border-border"
-            aria-label="Abrir menú"
+            aria-label={dict.common.openMenu}
             onClick={() => setOpen((v) => !v)}
           >
             {open ? <X size={16} /> : <Menu size={16} />}
@@ -95,10 +109,10 @@ export function Header() {
               </Link>
             ))}
             <Link
-              href="/contacto"
+              href={`/${lang}/contacto`}
               className="mt-2 inline-flex items-center justify-center h-10 rounded-full bg-foreground text-background text-sm font-medium"
             >
-              Hablemos →
+              {dict.common.letTalk} →
             </Link>
           </nav>
         </div>

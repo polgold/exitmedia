@@ -1,15 +1,28 @@
 import type { Metadata } from "next";
 import Image from "next/image";
 import Link from "next/link";
+import { notFound } from "next/navigation";
 import { getAllPostsMeta } from "@/lib/blog";
 import { MotionIn } from "@/components/ui/MotionIn";
 import { ArrowUpRight } from "lucide-react";
+import { getDictionary } from "@/lib/i18n/dictionaries";
+import { isLocale, type Locale } from "@/lib/i18n/config";
 
-export const metadata: Metadata = {
-  title: "Blog — Notas sobre desarrollo, IA y e-commerce",
-  description:
-    "Notas, tutoriales y opiniones sobre desarrollo web, WordPress, inteligencia artificial y e-commerce. Escritas por el equipo de ExitMedia.",
-};
+type PageParams = Promise<{ lang: string }>;
+
+export async function generateMetadata({
+  params,
+}: {
+  params: PageParams;
+}): Promise<Metadata> {
+  const { lang } = await params;
+  if (!isLocale(lang)) return {};
+  const dict = await getDictionary(lang);
+  return {
+    title: dict.pageBlog.title,
+    description: dict.pageBlog.description,
+  };
+}
 
 const tints: Record<string, string> = {
   mcp: "rgba(17, 19, 24, 0.45)",
@@ -18,16 +31,21 @@ const tints: Record<string, string> = {
   default: "rgba(20, 20, 20, 0.45)",
 };
 
-function formatDate(d: string) {
-  return new Date(d).toLocaleDateString("es-AR", {
+function formatDate(d: string, dateLocale: string) {
+  return new Date(d).toLocaleDateString(dateLocale, {
     day: "numeric",
     month: "short",
     year: "numeric",
   });
 }
 
-export default function BlogPage() {
-  const posts = getAllPostsMeta();
+export default async function BlogPage({ params }: { params: PageParams }) {
+  const { lang } = await params;
+  if (!isLocale(lang)) notFound();
+  const locale = lang as Locale;
+  const dict = await getDictionary(locale);
+  const p = dict.pageBlog;
+  const posts = getAllPostsMeta(locale, dict.readingTime);
   const [featured, ...rest] = posts;
 
   return (
@@ -44,15 +62,15 @@ export default function BlogPage() {
         <div className="mx-auto max-w-7xl px-6 lg:px-8 pt-20 md:pt-28 pb-16 md:pb-20">
           <div className="inline-flex items-center gap-2 text-xs uppercase tracking-[0.18em] text-muted">
             <span className="w-6 h-px bg-accent" />
-            Blog
+            {p.label}
           </div>
           <h1 className="font-display text-[clamp(2.75rem,6.8vw,5.25rem)] leading-[1.02] tracking-[-0.02em] mt-6 text-balance max-w-4xl">
-            Notas, tutoriales y{" "}
-            <span className="italic text-accent">opiniones</span>.
+            {p.heroPrefix}
+            <span className="italic text-accent">{p.heroHighlight}</span>
+            {p.heroSuffix}
           </h1>
           <p className="mt-8 text-lg md:text-xl text-muted max-w-2xl leading-relaxed text-pretty">
-            Lo que aprendemos trabajando, compartido sin filtros. Corto, denso
-            y con links a herramientas reales.
+            {p.intro}
           </p>
         </div>
       </section>
@@ -61,7 +79,7 @@ export default function BlogPage() {
         {featured && featured.image && (
           <MotionIn>
             <Link
-              href={`/blog/${featured.slug}`}
+              href={`/${locale}/blog/${featured.slug}`}
               className="group block rounded-2xl border border-border overflow-hidden hover:border-accent/60 transition-colors bg-surface"
             >
               <div className="grid grid-cols-1 lg:grid-cols-12">
@@ -84,7 +102,7 @@ export default function BlogPage() {
                     }}
                   />
                   <div className="absolute top-5 left-5 inline-flex items-center gap-2 h-7 px-3 rounded-full text-[10px] uppercase tracking-widest bg-accent text-background font-medium">
-                    Destacado
+                    {dict.common.featured}
                   </div>
                 </div>
                 <div className="lg:col-span-6 p-8 md:p-12 flex flex-col justify-between gap-8">
@@ -102,9 +120,9 @@ export default function BlogPage() {
                     </p>
                   </div>
                   <div className="flex items-center justify-between text-sm text-muted">
-                    <span>{formatDate(featured.date)}</span>
+                    <span>{formatDate(featured.date, dict.readingTime.dateLocale)}</span>
                     <span className="inline-flex items-center gap-1 text-foreground group-hover:text-accent">
-                      Leer nota <ArrowUpRight size={14} />
+                      {dict.common.readArticle} <ArrowUpRight size={14} />
                     </span>
                   </div>
                 </div>
@@ -120,7 +138,7 @@ export default function BlogPage() {
               return (
                 <MotionIn key={post.slug} delay={i * 0.05}>
                   <Link
-                    href={`/blog/${post.slug}`}
+                    href={`/${locale}/blog/${post.slug}`}
                     className="group block rounded-2xl border border-border overflow-hidden hover:border-accent/60 transition-colors bg-surface"
                   >
                     {post.image && (
@@ -148,7 +166,7 @@ export default function BlogPage() {
                       <div className="flex items-center gap-3 text-xs uppercase tracking-widest text-muted">
                         <span>{post.readingTime}</span>
                         <span>·</span>
-                        <span>{formatDate(post.date)}</span>
+                        <span>{formatDate(post.date, dict.readingTime.dateLocale)}</span>
                       </div>
                       <h3 className="mt-3 font-display text-xl md:text-2xl leading-[1.12] tracking-[-0.015em] text-balance">
                         {post.title}
@@ -158,7 +176,7 @@ export default function BlogPage() {
                       </p>
                       <div className="mt-5 flex items-center justify-end text-xs">
                         <span className="inline-flex items-center gap-1 text-foreground group-hover:text-accent">
-                          Leer <ArrowUpRight size={12} />
+                          {dict.common.read} <ArrowUpRight size={12} />
                         </span>
                       </div>
                     </div>

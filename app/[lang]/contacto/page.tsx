@@ -1,15 +1,34 @@
 import type { Metadata } from "next";
+import { notFound } from "next/navigation";
 import { ContactForm } from "@/components/ContactForm";
 import { Mail, MessageCircle, MapPin, Clock } from "lucide-react";
 import { Instagram } from "@/components/icons/Instagram";
+import { getDictionary } from "@/lib/i18n/dictionaries";
+import { isLocale, type Locale } from "@/lib/i18n/config";
 
-export const metadata: Metadata = {
-  title: "Contacto — Hablemos de tu proyecto",
-  description:
-    "Escribinos por formulario, email, WhatsApp o Instagram. Respondemos en menos de un día hábil — normalmente, el mismo día.",
-};
+type PageParams = Promise<{ lang: string }>;
 
-export default function ContactoPage() {
+export async function generateMetadata({
+  params,
+}: {
+  params: PageParams;
+}): Promise<Metadata> {
+  const { lang } = await params;
+  if (!isLocale(lang)) return {};
+  const dict = await getDictionary(lang);
+  return {
+    title: dict.pageContact.title,
+    description: dict.pageContact.description,
+  };
+}
+
+export default async function ContactoPage({ params }: { params: PageParams }) {
+  const { lang } = await params;
+  if (!isLocale(lang)) notFound();
+  const locale = lang as Locale;
+  const dict = await getDictionary(locale);
+  const c = dict.pageContact;
+
   return (
     <section className="relative overflow-hidden">
       <div
@@ -25,15 +44,15 @@ export default function ContactoPage() {
           <div className="lg:col-span-5">
             <div className="inline-flex items-center gap-2 text-xs uppercase tracking-[0.18em] text-muted">
               <span className="w-6 h-px bg-accent" />
-              Contacto
+              {c.label}
             </div>
             <h1 className="font-display text-[clamp(3rem,6.5vw,5rem)] leading-[0.98] tracking-tight mt-6 text-balance">
-              Hablemos de tu <span className="italic text-accent">próximo</span> proyecto.
+              {c.heroPrefix}
+              <span className="italic text-accent">{c.heroHighlight}</span>
+              {c.heroSuffix}
             </h1>
             <p className="mt-8 text-lg text-muted text-pretty leading-relaxed">
-              Completá el formulario o escribinos directo por el canal que
-              prefieras. Respondemos en menos de un día hábil — normalmente, el
-              mismo día.
+              {c.intro}
             </p>
 
             <ul className="mt-10 space-y-4 text-sm">
@@ -56,7 +75,7 @@ export default function ContactoPage() {
                   href="https://wa.me/5491136511204"
                   className="hover:text-accent"
                 >
-                  +54 11 3651 1204 · WhatsApp
+                  +54 11 3651 1204 {c.whatsappSuffix}
                 </a>
               </li>
               <li className="flex items-center gap-3">
@@ -74,30 +93,27 @@ export default function ContactoPage() {
                 <span className="w-9 h-9 grid place-items-center rounded-full border border-border text-accent">
                   <MapPin size={15} />
                 </span>
-                <span className="text-muted">Buenos Aires, Argentina</span>
+                <span className="text-muted">{c.addressLabel}</span>
               </li>
               <li className="flex items-center gap-3">
                 <span className="w-9 h-9 grid place-items-center rounded-full border border-border text-accent">
                   <Clock size={15} />
                 </span>
-                <span className="text-muted">Lunes a viernes, 10:00 – 19:00 (GMT-3)</span>
+                <span className="text-muted">{c.hours}</span>
               </li>
             </ul>
 
             <div className="mt-12 rounded-2xl border border-border bg-surface p-6">
               <div className="text-xs uppercase tracking-widest text-muted mb-2">
-                Urgencias
+                {c.urgentTitle}
               </div>
-              <p className="text-sm text-muted leading-relaxed">
-                ¿Sitio caído, problema con la tienda, algo que se rompió de
-                noche? WhatsApp directo: respondemos también fuera de horario.
-              </p>
+              <p className="text-sm text-muted leading-relaxed">{c.urgentBody}</p>
             </div>
           </div>
 
           <div className="lg:col-span-7">
             <div className="rounded-2xl border border-border bg-background p-6 md:p-8">
-              <ContactForm />
+              <ContactForm lang={locale} dict={dict.contactForm} />
             </div>
           </div>
         </div>

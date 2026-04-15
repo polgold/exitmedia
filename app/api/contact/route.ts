@@ -13,6 +13,7 @@ type Payload = {
   projectType?: string;
   budget?: string;
   message?: string;
+  locale?: string;
 };
 
 function escape(s: string) {
@@ -29,7 +30,7 @@ export async function POST(req: NextRequest) {
     return NextResponse.json({ error: "Payload inválido" }, { status: 400 });
   }
 
-  const { name, email, phone, projectType, budget, message } = data;
+  const { name, email, phone, projectType, budget, message, locale } = data;
 
   if (!name || !email || !projectType || !message) {
     return NextResponse.json(
@@ -72,7 +73,7 @@ export async function POST(req: NextRequest) {
       from: FROM,
       to: [TO],
       replyTo: email,
-      subject: `Nuevo contacto — ${projectType} — ${name}`,
+      subject: `Nuevo contacto${locale ? ` [${locale}]` : ""} — ${projectType} — ${name}`,
       html,
     });
     if (result.error) {

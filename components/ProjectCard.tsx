@@ -1,7 +1,9 @@
 import Image from "next/image";
 import Link from "next/link";
 import { ArrowUpRight } from "lucide-react";
-import type { Project } from "@/lib/projects";
+import type { ProjectMeta } from "@/lib/projects";
+import type { ProjectT } from "@/lib/i18n/types";
+import type { Locale } from "@/lib/i18n/config";
 
 const tints: Record<string, string> = {
   italmarket: "rgba(184, 61, 44, 0.65)",
@@ -10,18 +12,25 @@ const tints: Record<string, string> = {
   default: "rgba(20, 20, 20, 0.55)",
 };
 
-export function ProjectCard({ project }: { project: Project }) {
-  const tint = tints[project.cover] || tints.default;
+type Props = {
+  lang: Locale;
+  meta: ProjectMeta;
+  info: ProjectT;
+  comingSoonLabel: string;
+};
+
+export function ProjectCard({ lang, meta, info, comingSoonLabel }: Props) {
+  const tint = tints[meta.cover] || tints.default;
 
   return (
     <Link
-      href={`/trabajos/${project.slug}`}
+      href={`/${lang}/trabajos/${meta.slug}`}
       className="group block relative overflow-hidden rounded-2xl border border-border bg-surface"
     >
       <div className="relative aspect-[4/3] overflow-hidden">
         <Image
-          src={project.image}
-          alt={project.imageAlt}
+          src={meta.image}
+          alt={info.imageAlt}
           fill
           className="object-cover transition-transform duration-[1200ms] group-hover:scale-105"
           sizes="(max-width: 768px) 100vw, (max-width: 1280px) 50vw, 33vw"
@@ -36,22 +45,22 @@ export function ProjectCard({ project }: { project: Project }) {
         <div className="absolute inset-0 flex items-end p-6">
           <div className="text-white">
             <div className="text-[10px] uppercase tracking-[0.25em] opacity-80">
-              {project.category} · {project.year}
+              {info.category} · {meta.year}
             </div>
             <div className="mt-1 font-display text-4xl md:text-5xl leading-[1.05]">
-              {project.title}
+              {info.title}
             </div>
           </div>
         </div>
-        {project.status === "coming-soon" && (
+        {meta.status === "coming-soon" && (
           <div className="absolute top-4 right-4 text-[10px] uppercase tracking-widest bg-black/50 text-white px-2 py-1 rounded-full backdrop-blur">
-            próximamente
+            {comingSoonLabel}
           </div>
         )}
       </div>
       <div className="flex items-start justify-between gap-4 p-5">
         <p className="text-sm text-muted line-clamp-2 leading-relaxed">
-          {project.excerpt}
+          {info.excerpt}
         </p>
         <ArrowUpRight
           size={18}

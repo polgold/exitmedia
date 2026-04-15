@@ -2,19 +2,25 @@ import Link from "next/link";
 import { Logo } from "./Logo";
 import { Mail, MessageCircle } from "lucide-react";
 import { Instagram } from "./icons/Instagram";
+import type { Locale } from "@/lib/i18n/config";
+import type { Dictionary } from "@/lib/i18n/types";
 
-export function Footer() {
+type Props = {
+  lang: Locale;
+  dict: Pick<Dictionary, "footer" | "nav">;
+};
+
+export function Footer({ lang, dict }: Props) {
   const year = new Date().getFullYear();
+  const f = dict.footer;
   return (
     <footer className="border-t border-border mt-24">
       <div className="mx-auto max-w-7xl px-6 lg:px-8 py-16">
         <div className="grid grid-cols-1 md:grid-cols-12 gap-10">
           <div className="md:col-span-5">
-            <Logo />
+            <Logo lang={lang} />
             <p className="mt-4 text-sm text-muted max-w-sm text-pretty">
-              Estudio digital de Buenos Aires. Diseñamos, desarrollamos y lanzamos
-              sitios web, tiendas online, apps y herramientas con inteligencia
-              artificial.
+              {f.description}
             </p>
             <div className="mt-6 flex items-center gap-2">
               <a
@@ -47,32 +53,37 @@ export function Footer() {
 
           <div className="md:col-span-2">
             <h4 className="text-xs uppercase tracking-widest text-muted mb-4">
-              Estudio
+              {f.studio}
             </h4>
             <ul className="space-y-2 text-sm">
-              <li><Link href="/sobre-nosotros" className="hover:text-accent">Nosotros</Link></li>
-              <li><Link href="/trabajos" className="hover:text-accent">Trabajos</Link></li>
-              <li><Link href="/blog" className="hover:text-accent">Blog</Link></li>
-              <li><Link href="/contacto" className="hover:text-accent">Contacto</Link></li>
+              <li><Link href={`/${lang}/sobre-nosotros`} className="hover:text-accent">{dict.nav.about}</Link></li>
+              <li><Link href={`/${lang}/trabajos`} className="hover:text-accent">{dict.nav.work}</Link></li>
+              <li><Link href={`/${lang}/blog`} className="hover:text-accent">{dict.nav.blog}</Link></li>
+              <li><Link href={`/${lang}/contacto`} className="hover:text-accent">{dict.nav.contact}</Link></li>
             </ul>
           </div>
 
           <div className="md:col-span-2">
             <h4 className="text-xs uppercase tracking-widest text-muted mb-4">
-              Servicios
+              {f.services}
             </h4>
             <ul className="space-y-2 text-sm">
-              <li><Link href="/servicios#web" className="hover:text-accent">Sitios web</Link></li>
-              <li><Link href="/servicios#ecommerce" className="hover:text-accent">E-commerce</Link></li>
-              <li><Link href="/servicios#apps" className="hover:text-accent">Aplicaciones</Link></li>
-              <li><Link href="/servicios#ai" className="hover:text-accent">IA aplicada</Link></li>
-              <li><Link href="/servicios#seo" className="hover:text-accent">SEO</Link></li>
+              {f.serviceLinks.map((s) => (
+                <li key={s.id}>
+                  <Link
+                    href={`/${lang}/servicios#${s.id}`}
+                    className="hover:text-accent"
+                  >
+                    {s.label}
+                  </Link>
+                </li>
+              ))}
             </ul>
           </div>
 
           <div className="md:col-span-3">
             <h4 className="text-xs uppercase tracking-widest text-muted mb-4">
-              Contacto
+              {f.contact}
             </h4>
             <ul className="space-y-2 text-sm">
               <li>
@@ -85,16 +96,14 @@ export function Footer() {
                   +54 11 3651 1204
                 </a>
               </li>
-              <li className="text-muted">Buenos Aires, Argentina</li>
+              <li className="text-muted">{f.address}</li>
             </ul>
           </div>
         </div>
 
         <div className="mt-16 pt-8 border-t border-border flex flex-col md:flex-row items-start md:items-center justify-between gap-4 text-xs text-muted">
-          <p>© {year} ExitMedia. Una división digital de Sun Factory.</p>
-          <p className="font-mono">
-            built with next.js · hosted on vercel · made in buenos aires
-          </p>
+          <p>© {year} ExitMedia. {f.rights}</p>
+          <p className="font-mono">{f.builtWith}</p>
         </div>
       </div>
     </footer>
