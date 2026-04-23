@@ -10,6 +10,11 @@ const nextConfig: NextConfig = {
     ],
     formats: ["image/avif", "image/webp"],
   },
+  async rewrites() {
+    return [
+      { source: "/rambla", destination: "/rambla/index.html" },
+    ];
+  },
 };
 
 export default nextConfig;

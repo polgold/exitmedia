@@ -1,0 +1,1459 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="robots" content="noindex, nofollow">
+<title>Rambla.ai — Prototipo</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,300;0,9..144,400;0,9..144,500;1,9..144,300;1,9..144,400&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+:root {
+  --ink: #1A1A1A;
+  --paper: #FAFAF7;
+  --terracotta: #C54E3C;
+  --cream: #F5F1EC;
+  --gray-mid: #6B6B6B;
+  --gray-line: #D4CFC7;
+  --olive: #5C5F3F;
+  --serif: 'Fraunces', serif;
+  --sans: 'DM Sans', -apple-system, sans-serif;
+  --space-1: 4px;
+  --space-2: 8px;
+  --space-3: 16px;
+  --space-4: 24px;
+  --space-5: 32px;
+  --space-6: 48px;
+  --space-7: 64px;
+  --space-8: 96px;
+  --space-9: 128px;
+}
+
+* { margin: 0; padding: 0; box-sizing: border-box; }
+
+html { scroll-behavior: smooth; }
+
+body {
+  font-family: var(--sans);
+  color: var(--ink);
+  background: var(--paper);
+  font-size: 15px;
+  line-height: 1.5;
+  -webkit-font-smoothing: antialiased;
+}
+
+a { color: inherit; text-decoration: none; }
+button { font-family: inherit; cursor: pointer; border: none; background: none; color: inherit; }
+img { max-width: 100%; display: block; }
+
+/* ========= NAV ========= */
+.nav {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  z-index: 100;
+  background: rgba(250, 250, 247, 0.92);
+  backdrop-filter: blur(12px);
+  border-bottom: 1px solid var(--gray-line);
+}
+.nav-inner {
+  max-width: 1440px;
+  margin: 0 auto;
+  padding: var(--space-3) var(--space-6);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-6);
+}
+.logo {
+  font-family: var(--serif);
+  font-weight: 400;
+  font-size: 22px;
+  letter-spacing: 0.02em;
+  color: var(--ink);
+  cursor: pointer;
+}
+.logo .dot-ai {
+  color: var(--terracotta);
+  font-style: italic;
+}
+.nav-links {
+  display: flex;
+  gap: var(--space-5);
+  font-size: 13px;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+}
+.nav-links a {
+  padding: var(--space-2) 0;
+  color: var(--ink);
+  transition: color 0.2s;
+  cursor: pointer;
+  position: relative;
+}
+.nav-links a:hover { color: var(--terracotta); }
+.nav-links a.active {
+  color: var(--terracotta);
+}
+.nav-links a.active::after {
+  content: '';
+  position: absolute;
+  bottom: -2px;
+  left: 0;
+  right: 0;
+  height: 1px;
+  background: var(--terracotta);
+}
+.nav-right {
+  display: flex;
+  align-items: center;
+  gap: var(--space-4);
+  font-size: 13px;
+}
+.nav-search {
+  width: 220px;
+  padding: 8px 14px;
+  border: 1px solid var(--gray-line);
+  background: transparent;
+  font-size: 13px;
+  color: var(--ink);
+  outline: none;
+  font-family: var(--sans);
+  transition: border-color 0.2s;
+}
+.nav-search:focus { border-color: var(--ink); }
+.nav-search::placeholder { color: var(--gray-mid); }
+.bag-link {
+  position: relative;
+  padding: var(--space-2);
+  cursor: pointer;
+}
+.bag-count {
+  position: absolute;
+  top: -2px;
+  right: -6px;
+  background: var(--terracotta);
+  color: var(--paper);
+  font-size: 10px;
+  font-weight: 500;
+  width: 16px;
+  height: 16px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* ========= VIEWS ========= */
+.view { display: none; padding-top: 64px; }
+.view.active { display: block; animation: fadeIn 0.4s ease-out; }
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(8px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.container {
+  max-width: 1440px;
+  margin: 0 auto;
+  padding: 0 var(--space-6);
+}
+
+/* ========= HERO ========= */
+.hero {
+  padding: var(--space-8) 0 var(--space-7);
+  border-bottom: 1px solid var(--gray-line);
+}
+.hero-label {
+  font-size: 12px;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--terracotta);
+  margin-bottom: var(--space-4);
+}
+.hero-title {
+  font-family: var(--serif);
+  font-weight: 300;
+  font-size: clamp(42px, 6vw, 84px);
+  line-height: 0.98;
+  letter-spacing: -0.01em;
+  max-width: 1100px;
+  margin-bottom: var(--space-5);
+}
+.hero-title em {
+  font-style: italic;
+  color: var(--terracotta);
+  font-weight: 400;
+}
+.hero-meta {
+  display: flex;
+  align-items: baseline;
+  gap: var(--space-5);
+  margin-top: var(--space-5);
+  font-size: 13px;
+  color: var(--gray-mid);
+  letter-spacing: 0.03em;
+}
+.hero-cta {
+  font-family: var(--serif);
+  font-style: italic;
+  font-size: 16px;
+  color: var(--ink);
+  border-bottom: 1px solid var(--ink);
+  padding-bottom: 2px;
+  cursor: pointer;
+  transition: color 0.2s, border-color 0.2s;
+}
+.hero-cta:hover { color: var(--terracotta); border-color: var(--terracotta); }
+
+/* ========= SECTION HEADERS ========= */
+.section {
+  padding: var(--space-8) 0;
+  border-bottom: 1px solid var(--gray-line);
+}
+.section-head {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  margin-bottom: var(--space-6);
+}
+.section-title {
+  font-family: var(--serif);
+  font-weight: 400;
+  font-size: 32px;
+  letter-spacing: -0.005em;
+}
+.section-link {
+  font-size: 12px;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  color: var(--ink);
+  cursor: pointer;
+  transition: color 0.2s;
+}
+.section-link:hover { color: var(--terracotta); }
+
+/* ========= BRAND GRID ========= */
+.brands-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: var(--space-4);
+}
+.brand-card {
+  cursor: pointer;
+  transition: transform 0.3s ease;
+}
+.brand-card:hover {
+  transform: translateY(-4px);
+}
+.brand-img {
+  aspect-ratio: 3/4;
+  background: var(--cream);
+  margin-bottom: var(--space-3);
+  position: relative;
+  overflow: hidden;
+}
+.brand-img::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(135deg, var(--cream) 0%, #E8DFD4 100%);
+}
+.brand-img .brand-name-overlay {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-family: var(--serif);
+  font-style: italic;
+  font-size: 32px;
+  color: var(--ink);
+  letter-spacing: -0.01em;
+}
+.brand-img.brand-2::before { background: linear-gradient(135deg, #D4C8BA 0%, #A89888 100%); }
+.brand-img.brand-3::before { background: linear-gradient(135deg, #E6DFD1 0%, #C4B8A0 100%); }
+.brand-img.brand-4::before { background: linear-gradient(135deg, #F0E6D6 0%, #D9C5A7 100%); }
+.brand-name {
+  font-family: var(--serif);
+  font-size: 18px;
+  font-weight: 400;
+  margin-bottom: 2px;
+}
+.brand-location {
+  font-size: 12px;
+  color: var(--gray-mid);
+  letter-spacing: 0.02em;
+}
+
+/* ========= EDITORIAL BLOCK ========= */
+.editorial-block {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: var(--space-7);
+  align-items: center;
+}
+.editorial-img {
+  aspect-ratio: 4/5;
+  background: linear-gradient(160deg, #8B6F5E 0%, #5C4A3F 100%);
+  position: relative;
+}
+.editorial-img::after {
+  content: '';
+  position: absolute;
+  inset: 20% 25% 30% 20%;
+  background: linear-gradient(180deg, transparent 0%, rgba(0,0,0,0.2) 100%);
+  border-radius: 2px;
+}
+.editorial-text .label {
+  font-size: 12px;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--terracotta);
+  margin-bottom: var(--space-3);
+}
+.editorial-text h2 {
+  font-family: var(--serif);
+  font-weight: 300;
+  font-size: 44px;
+  line-height: 1.05;
+  letter-spacing: -0.01em;
+  margin-bottom: var(--space-4);
+}
+.editorial-text p {
+  font-size: 16px;
+  line-height: 1.65;
+  color: var(--ink);
+  margin-bottom: var(--space-3);
+  max-width: 540px;
+}
+.editorial-text p.drop::first-letter {
+  font-family: var(--serif);
+  font-size: 68px;
+  font-weight: 400;
+  float: left;
+  line-height: 0.85;
+  padding: 6px 10px 0 0;
+  color: var(--terracotta);
+}
+.read-more {
+  display: inline-block;
+  margin-top: var(--space-4);
+  font-family: var(--serif);
+  font-style: italic;
+  font-size: 16px;
+  border-bottom: 1px solid var(--ink);
+  padding-bottom: 2px;
+  cursor: pointer;
+}
+
+/* ========= PRODUCT GRID ========= */
+.filters-bar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: var(--space-5) 0;
+  border-bottom: 1px solid var(--gray-line);
+  margin-bottom: var(--space-5);
+}
+.filter-count {
+  font-size: 14px;
+  color: var(--gray-mid);
+}
+.filter-count strong {
+  color: var(--ink);
+  font-weight: 500;
+}
+.filter-chips {
+  display: flex;
+  gap: var(--space-2);
+}
+.chip {
+  padding: 6px 14px;
+  border: 1px solid var(--gray-line);
+  font-size: 12px;
+  letter-spacing: 0.02em;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+.chip:hover { border-color: var(--ink); }
+.chip.active {
+  background: var(--ink);
+  color: var(--paper);
+  border-color: var(--ink);
+}
+
+.results-layout {
+  display: grid;
+  grid-template-columns: 240px 1fr;
+  gap: var(--space-6);
+}
+.filters-sidebar {
+  padding-right: var(--space-4);
+}
+.filter-group {
+  border-bottom: 1px solid var(--gray-line);
+  padding: var(--space-4) 0;
+}
+.filter-group h4 {
+  font-family: var(--serif);
+  font-size: 16px;
+  font-weight: 400;
+  margin-bottom: var(--space-3);
+}
+.filter-option {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  padding: 4px 0;
+  font-size: 13px;
+  color: var(--gray-mid);
+  cursor: pointer;
+  transition: color 0.2s;
+}
+.filter-option:hover { color: var(--ink); }
+.filter-option input[type="checkbox"] {
+  accent-color: var(--terracotta);
+}
+.filter-option .count {
+  margin-left: auto;
+  font-size: 11px;
+  color: var(--gray-mid);
+}
+
+.products-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: var(--space-5) var(--space-4);
+}
+.product-card {
+  cursor: pointer;
+}
+.product-img {
+  aspect-ratio: 3/4;
+  background: var(--cream);
+  margin-bottom: var(--space-3);
+  position: relative;
+  overflow: hidden;
+}
+.product-img::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(180deg, #E8DFD4 0%, #CFC2B0 100%);
+  transition: transform 0.6s ease;
+}
+.product-card:hover .product-img::before {
+  transform: scale(1.04);
+}
+.product-img.pc-1::before { background: linear-gradient(180deg, #D4C8BA 0%, #8E7F6E 100%); }
+.product-img.pc-2::before { background: linear-gradient(180deg, #E6DCC5 0%, #BFB089 100%); }
+.product-img.pc-3::before { background: linear-gradient(180deg, #C9B89E 0%, #8A7659 100%); }
+.product-img.pc-4::before { background: linear-gradient(180deg, #EFE3D0 0%, #C7B295 100%); }
+.product-img.pc-5::before { background: linear-gradient(180deg, #B8A68C 0%, #76654C 100%); }
+.product-img.pc-6::before { background: linear-gradient(180deg, #DDCFB4 0%, #A89470 100%); }
+.product-img.pc-7::before { background: linear-gradient(180deg, #E8DDC7 0%, #B5A382 100%); }
+.product-img.pc-8::before { background: linear-gradient(180deg, #CDBEA3 0%, #8C7958 100%); }
+.product-img.pc-9::before { background: linear-gradient(180deg, #F0E6D0 0%, #C9B796 100%); }
+
+.product-meta {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  margin-bottom: 2px;
+}
+.product-brand {
+  font-family: var(--serif);
+  font-style: italic;
+  font-size: 13px;
+  color: var(--gray-mid);
+}
+.product-name {
+  font-size: 14px;
+  font-weight: 400;
+  margin-bottom: 2px;
+}
+.product-price {
+  font-size: 14px;
+  color: var(--ink);
+}
+
+/* ========= PDP ========= */
+.pdp-layout {
+  display: grid;
+  grid-template-columns: 1.1fr 1fr;
+  gap: var(--space-7);
+  padding: var(--space-7) 0;
+}
+.pdp-gallery {
+  display: grid;
+  grid-template-columns: 80px 1fr;
+  gap: var(--space-3);
+}
+.thumb-col {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+}
+.thumb {
+  aspect-ratio: 3/4;
+  background: var(--cream);
+  cursor: pointer;
+  opacity: 0.6;
+  transition: opacity 0.2s;
+}
+.thumb.active, .thumb:hover { opacity: 1; }
+.thumb.tb-1 { background: linear-gradient(180deg, #D4C8BA 0%, #8E7F6E 100%); }
+.thumb.tb-2 { background: linear-gradient(180deg, #8E7F6E 0%, #5C4D3E 100%); }
+.thumb.tb-3 { background: linear-gradient(180deg, #B5A488 0%, #7C6B50 100%); }
+.thumb.tb-4 { background: linear-gradient(180deg, #C9BCA0 0%, #8A7C60 100%); }
+
+.main-img {
+  aspect-ratio: 3/4;
+  background: linear-gradient(180deg, #D4C8BA 0%, #8E7F6E 100%);
+}
+.pdp-info {
+  padding-top: var(--space-4);
+}
+.pdp-brand {
+  font-family: var(--serif);
+  font-style: italic;
+  font-size: 16px;
+  color: var(--terracotta);
+  margin-bottom: var(--space-2);
+  cursor: pointer;
+}
+.pdp-title {
+  font-family: var(--serif);
+  font-weight: 300;
+  font-size: 40px;
+  line-height: 1.1;
+  margin-bottom: var(--space-4);
+  letter-spacing: -0.01em;
+}
+.pdp-price {
+  font-size: 20px;
+  margin-bottom: var(--space-5);
+}
+.pdp-section {
+  margin-bottom: var(--space-5);
+}
+.pdp-section .label {
+  font-size: 12px;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--gray-mid);
+  margin-bottom: var(--space-3);
+}
+.sizes {
+  display: flex;
+  gap: var(--space-2);
+}
+.size-btn {
+  min-width: 56px;
+  padding: 12px 16px;
+  border: 1px solid var(--gray-line);
+  font-size: 14px;
+  background: transparent;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+.size-btn:hover { border-color: var(--ink); }
+.size-btn.selected {
+  border-color: var(--ink);
+  background: var(--ink);
+  color: var(--paper);
+}
+.size-btn.disabled {
+  color: var(--gray-mid);
+  text-decoration: line-through;
+  cursor: not-allowed;
+}
+
+.add-to-bag {
+  width: 100%;
+  padding: 18px;
+  background: var(--ink);
+  color: var(--paper);
+  font-size: 14px;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  cursor: pointer;
+  transition: background 0.2s;
+  margin-bottom: var(--space-3);
+}
+.add-to-bag:hover { background: var(--terracotta); }
+
+.wishlist-btn {
+  width: 100%;
+  padding: 16px;
+  background: transparent;
+  border: 1px solid var(--gray-line);
+  color: var(--ink);
+  font-size: 13px;
+  letter-spacing: 0.05em;
+  cursor: pointer;
+  transition: border-color 0.2s;
+  margin-bottom: var(--space-5);
+}
+.wishlist-btn:hover { border-color: var(--ink); }
+
+.pdp-details {
+  border-top: 1px solid var(--gray-line);
+  padding-top: var(--space-4);
+}
+.detail-row {
+  border-bottom: 1px solid var(--gray-line);
+  padding: var(--space-3) 0;
+  cursor: pointer;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-size: 14px;
+}
+.detail-row .icon {
+  font-family: var(--serif);
+  font-size: 18px;
+  color: var(--gray-mid);
+}
+
+/* ========= BAG ========= */
+.bag-view {
+  max-width: 900px;
+  margin: 0 auto;
+  padding: var(--space-7) var(--space-6);
+}
+.bag-title {
+  font-family: var(--serif);
+  font-weight: 300;
+  font-size: 42px;
+  margin-bottom: var(--space-2);
+}
+.bag-sub {
+  font-size: 14px;
+  color: var(--gray-mid);
+  margin-bottom: var(--space-6);
+}
+.bag-brand-group {
+  border-bottom: 1px solid var(--gray-line);
+  padding: var(--space-5) 0;
+}
+.bag-brand-group:first-of-type { border-top: 1px solid var(--gray-line); }
+.bag-brand-name {
+  font-family: var(--serif);
+  font-style: italic;
+  font-size: 18px;
+  color: var(--terracotta);
+  margin-bottom: var(--space-4);
+}
+.bag-item {
+  display: grid;
+  grid-template-columns: 100px 1fr auto;
+  gap: var(--space-4);
+  align-items: start;
+  margin-bottom: var(--space-4);
+}
+.bag-item:last-child { margin-bottom: 0; }
+.bag-item-img {
+  aspect-ratio: 3/4;
+  background: var(--cream);
+}
+.bag-item-img.bi-1 { background: linear-gradient(180deg, #2D2A28 0%, #0F0E0C 100%); }
+.bag-item-img.bi-2 { background: linear-gradient(180deg, #8B6F5E 0%, #5C4A3F 100%); }
+.bag-item-img.bi-3 { background: linear-gradient(180deg, #D4C8BA 0%, #8E7F6E 100%); }
+.bag-item-info h3 {
+  font-size: 15px;
+  font-weight: 500;
+  margin-bottom: 4px;
+}
+.bag-item-info .size {
+  font-size: 13px;
+  color: var(--gray-mid);
+  margin-bottom: var(--space-2);
+}
+.qty-control {
+  display: inline-flex;
+  border: 1px solid var(--gray-line);
+  font-size: 13px;
+}
+.qty-control button {
+  padding: 6px 10px;
+  color: var(--gray-mid);
+  cursor: pointer;
+}
+.qty-control button:hover { color: var(--ink); }
+.qty-control span {
+  padding: 6px 14px;
+  border-left: 1px solid var(--gray-line);
+  border-right: 1px solid var(--gray-line);
+}
+.bag-item-price {
+  text-align: right;
+}
+.bag-item-price .amount {
+  font-size: 14px;
+  margin-bottom: var(--space-2);
+}
+.remove-link {
+  font-size: 12px;
+  color: var(--gray-mid);
+  cursor: pointer;
+  text-decoration: underline;
+}
+.remove-link:hover { color: var(--terracotta); }
+
+.bag-summary {
+  margin-top: var(--space-6);
+  padding: var(--space-5) 0;
+}
+.summary-row {
+  display: flex;
+  justify-content: space-between;
+  padding: var(--space-2) 0;
+  font-size: 14px;
+  color: var(--gray-mid);
+}
+.summary-row.total {
+  border-top: 1px solid var(--ink);
+  margin-top: var(--space-3);
+  padding-top: var(--space-4);
+  font-size: 18px;
+  font-family: var(--serif);
+  color: var(--ink);
+  font-weight: 400;
+}
+
+.checkout-btn {
+  width: 100%;
+  padding: 20px;
+  background: var(--ink);
+  color: var(--paper);
+  font-size: 14px;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  cursor: pointer;
+  transition: background 0.2s;
+  margin-top: var(--space-5);
+}
+.checkout-btn:hover { background: var(--terracotta); }
+
+/* ========= BRAND PAGE ========= */
+.brand-hero {
+  position: relative;
+  height: 60vh;
+  min-height: 480px;
+  background: linear-gradient(140deg, #8B6F5E 0%, #3D3028 100%);
+  display: flex;
+  align-items: flex-end;
+  padding: var(--space-7);
+  margin-bottom: var(--space-7);
+}
+.brand-hero-inner {
+  color: var(--paper);
+  max-width: 720px;
+}
+.brand-hero .label {
+  font-size: 12px;
+  letter-spacing: 0.15em;
+  text-transform: uppercase;
+  margin-bottom: var(--space-3);
+  opacity: 0.8;
+}
+.brand-hero h1 {
+  font-family: var(--serif);
+  font-weight: 300;
+  font-size: clamp(48px, 8vw, 96px);
+  line-height: 0.95;
+  letter-spacing: -0.02em;
+  margin-bottom: var(--space-3);
+}
+.brand-hero .meta {
+  font-size: 13px;
+  letter-spacing: 0.05em;
+  opacity: 0.8;
+}
+
+.brand-bio {
+  max-width: 720px;
+  margin: 0 auto var(--space-7);
+  padding: 0 var(--space-6);
+  text-align: center;
+}
+.brand-bio p {
+  font-family: var(--serif);
+  font-size: 22px;
+  line-height: 1.5;
+  color: var(--ink);
+  font-weight: 300;
+}
+.follow-brand-btn {
+  margin-top: var(--space-4);
+  padding: 12px 32px;
+  border: 1px solid var(--ink);
+  font-size: 13px;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+.follow-brand-btn:hover {
+  background: var(--ink);
+  color: var(--paper);
+}
+
+/* ========= FOOTER ========= */
+.footer {
+  padding: var(--space-7) 0 var(--space-5);
+  border-top: 1px solid var(--gray-line);
+  background: var(--cream);
+  margin-top: var(--space-8);
+}
+.footer-grid {
+  display: grid;
+  grid-template-columns: 2fr 1fr 1fr 1fr;
+  gap: var(--space-6);
+  padding-bottom: var(--space-6);
+  border-bottom: 1px solid var(--gray-line);
+  margin-bottom: var(--space-4);
+}
+.footer-brand h3 {
+  font-family: var(--serif);
+  font-weight: 400;
+  font-size: 28px;
+  margin-bottom: var(--space-3);
+}
+.footer-brand p {
+  font-size: 14px;
+  color: var(--gray-mid);
+  line-height: 1.6;
+  max-width: 360px;
+}
+.footer-col h4 {
+  font-size: 12px;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--ink);
+  margin-bottom: var(--space-3);
+}
+.footer-col ul { list-style: none; }
+.footer-col li {
+  margin-bottom: var(--space-2);
+  font-size: 13px;
+  color: var(--gray-mid);
+  cursor: pointer;
+  transition: color 0.2s;
+}
+.footer-col li:hover { color: var(--ink); }
+
+.footer-bottom {
+  display: flex;
+  justify-content: space-between;
+  font-size: 12px;
+  color: var(--gray-mid);
+}
+
+/* ========= RESPONSIVE ========= */
+@media (max-width: 960px) {
+  .container { padding: 0 var(--space-4); }
+  .nav-inner { padding: var(--space-3); gap: var(--space-3); }
+  .nav-search { display: none; }
+  .nav-links { display: none; }
+  .brands-grid { grid-template-columns: repeat(2, 1fr); }
+  .products-grid { grid-template-columns: repeat(2, 1fr); }
+  .editorial-block { grid-template-columns: 1fr; gap: var(--space-5); }
+  .pdp-layout { grid-template-columns: 1fr; gap: var(--space-5); padding: var(--space-5) 0; }
+  .pdp-gallery { grid-template-columns: 1fr; }
+  .thumb-col { flex-direction: row; }
+  .results-layout { grid-template-columns: 1fr; }
+  .filters-sidebar { display: none; }
+  .footer-grid { grid-template-columns: 1fr 1fr; }
+}
+
+/* ========= TOAST ========= */
+.toast {
+  position: fixed;
+  top: 80px;
+  right: var(--space-5);
+  background: var(--ink);
+  color: var(--paper);
+  padding: var(--space-3) var(--space-4);
+  font-size: 13px;
+  letter-spacing: 0.03em;
+  opacity: 0;
+  transform: translateX(20px);
+  pointer-events: none;
+  transition: all 0.3s ease;
+  z-index: 200;
+}
+.toast.show {
+  opacity: 1;
+  transform: translateX(0);
+}
+</style>
+</head>
+<body>
+
+<!-- ========= NAV ========= -->
+<nav class="nav">
+  <div class="nav-inner">
+    <div class="logo" onclick="showView('home')">RAMBLA<span class="dot-ai">.ai</span></div>
+    <div class="nav-links">
+      <a onclick="showView('search')" id="nav-marcas">Marcas</a>
+      <a onclick="showView('search')">Nuevo</a>
+      <a>Editorial</a>
+      <a onclick="showView('brand')">Descubrir</a>
+    </div>
+    <div class="nav-right">
+      <input type="text" class="nav-search" placeholder="Buscar…" onfocus="showView('search')">
+      <div class="bag-link" onclick="showView('bag')">
+        Bolsa
+        <span class="bag-count" id="bag-count">3</span>
+      </div>
+    </div>
+  </div>
+</nav>
+
+<!-- ========= HOME ========= -->
+<section class="view active" id="view-home">
+  <div class="container">
+
+    <!-- Hero -->
+    <div class="hero">
+      <div class="hero-label">Otoño 2026 · Edición 04</div>
+      <h1 class="hero-title">Marcas argentinas <em>que valen la pena.</em></h1>
+      <div class="hero-meta">
+        <span>Curaduría mensual de diseño independiente.</span>
+        <span class="hero-cta" onclick="showView('search')">Entrar a la edición</span>
+      </div>
+    </div>
+
+    <!-- Nuevas marcas -->
+    <div class="section">
+      <div class="section-head">
+        <h2 class="section-title">Nuevas marcas</h2>
+        <span class="section-link" onclick="showView('search')">Ver las 47 marcas →</span>
+      </div>
+      <div class="brands-grid">
+        <div class="brand-card" onclick="showView('brand')">
+          <div class="brand-img brand-1">
+            <div class="brand-name-overlay">Alzado</div>
+          </div>
+          <div class="brand-name">Alzado</div>
+          <div class="brand-location">Buenos Aires · desde 2021</div>
+        </div>
+        <div class="brand-card" onclick="showView('brand')">
+          <div class="brand-img brand-2">
+            <div class="brand-name-overlay">Pérez</div>
+          </div>
+          <div class="brand-name">Pérez Estudio</div>
+          <div class="brand-location">Córdoba · desde 2019</div>
+        </div>
+        <div class="brand-card" onclick="showView('brand')">
+          <div class="brand-img brand-3">
+            <div class="brand-name-overlay">Mineral</div>
+          </div>
+          <div class="brand-name">Mineral</div>
+          <div class="brand-location">Rosario · desde 2022</div>
+        </div>
+        <div class="brand-card" onclick="showView('brand')">
+          <div class="brand-img brand-4">
+            <div class="brand-name-overlay">Tuya</div>
+          </div>
+          <div class="brand-name">Tuya</div>
+          <div class="brand-location">Buenos Aires · desde 2020</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Editorial block -->
+    <div class="section">
+      <div class="editorial-block">
+        <div class="editorial-img"></div>
+        <div class="editorial-text">
+          <div class="label">Editorial · Ensayo</div>
+          <h2>El denim argentino según tres diseñadoras que lo están reescribiendo.</h2>
+          <p class="drop">Hay algo que pasa en los talleres pequeños de Buenos Aires y Córdoba desde hace tres años. El denim dejó de ser la tela barata del cotidiano y volvió a ser un material de autor. No es una moda. Es una forma distinta de pensar la prenda.</p>
+          <p>Hablamos con tres marcas que están construyendo ese vocabulario nuevo, cada una desde un ángulo propio: el oversized estructural, el vintage reconstruido, y el minimalismo de líneas limpias.</p>
+          <span class="read-more">Leer el artículo</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Categorías -->
+    <div class="section">
+      <div class="section-head">
+        <h2 class="section-title">Categorías</h2>
+      </div>
+      <div class="brands-grid">
+        <div class="brand-card" onclick="showView('search')">
+          <div class="brand-img" style="background: linear-gradient(140deg, #2D2A28 0%, #0F0E0C 100%);">
+            <div class="brand-name-overlay" style="color: #FAFAF7;">Abrigo</div>
+          </div>
+          <div class="brand-name">Abrigo</div>
+          <div class="brand-location">238 piezas</div>
+        </div>
+        <div class="brand-card" onclick="showView('search')">
+          <div class="brand-img" style="background: linear-gradient(140deg, #C5BBA8 0%, #8E8270 100%);">
+            <div class="brand-name-overlay">Vestidos</div>
+          </div>
+          <div class="brand-name">Vestidos</div>
+          <div class="brand-location">412 piezas</div>
+        </div>
+        <div class="brand-card" onclick="showView('search')">
+          <div class="brand-img" style="background: linear-gradient(140deg, #7B6550 0%, #3D3028 100%);">
+            <div class="brand-name-overlay" style="color: #FAFAF7;">Denim</div>
+          </div>
+          <div class="brand-name">Denim</div>
+          <div class="brand-location">176 piezas</div>
+        </div>
+        <div class="brand-card" onclick="showView('search')">
+          <div class="brand-img" style="background: linear-gradient(140deg, #E4DACB 0%, #B0A48A 100%);">
+            <div class="brand-name-overlay">Lencería</div>
+          </div>
+          <div class="brand-name">Lencería</div>
+          <div class="brand-location">94 piezas</div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</section>
+
+<!-- ========= SEARCH/RESULTS ========= -->
+<section class="view" id="view-search">
+  <div class="container">
+
+    <div style="padding: var(--space-6) 0 var(--space-4);">
+      <div style="font-size: 12px; letter-spacing: 0.1em; text-transform: uppercase; color: var(--gray-mid); margin-bottom: var(--space-2);">Resultados para</div>
+      <h1 style="font-family: var(--serif); font-weight: 300; font-size: 48px; letter-spacing: -0.01em;">Campera <em style="font-style: italic; color: var(--terracotta);">verde</em></h1>
+    </div>
+
+    <div class="filters-bar">
+      <div class="filter-count"><strong>47</strong> piezas en <strong>18</strong> marcas</div>
+      <div class="filter-chips">
+        <div class="chip active">Relevancia</div>
+        <div class="chip">Más nuevo</div>
+        <div class="chip">Precio ↑</div>
+        <div class="chip">Precio ↓</div>
+      </div>
+    </div>
+
+    <div class="results-layout">
+
+      <aside class="filters-sidebar">
+        <div class="filter-group">
+          <h4>Marca</h4>
+          <label class="filter-option"><input type="checkbox" checked> Alzado <span class="count">8</span></label>
+          <label class="filter-option"><input type="checkbox"> Pérez Estudio <span class="count">5</span></label>
+          <label class="filter-option"><input type="checkbox"> Mineral <span class="count">11</span></label>
+          <label class="filter-option"><input type="checkbox"> Tuya <span class="count">3</span></label>
+          <label class="filter-option"><input type="checkbox"> Ver más <span class="count">14</span></label>
+        </div>
+        <div class="filter-group">
+          <h4>Precio</h4>
+          <label class="filter-option"><input type="checkbox"> Hasta AR$ 25.000 <span class="count">12</span></label>
+          <label class="filter-option"><input type="checkbox"> 25 a 50.000 <span class="count">24</span></label>
+          <label class="filter-option"><input type="checkbox"> 50 a 100.000 <span class="count">8</span></label>
+          <label class="filter-option"><input type="checkbox"> Más de 100.000 <span class="count">3</span></label>
+        </div>
+        <div class="filter-group">
+          <h4>Talle</h4>
+          <label class="filter-option"><input type="checkbox"> XS</label>
+          <label class="filter-option"><input type="checkbox"> S</label>
+          <label class="filter-option"><input type="checkbox"> M</label>
+          <label class="filter-option"><input type="checkbox"> L</label>
+          <label class="filter-option"><input type="checkbox"> XL</label>
+        </div>
+        <div class="filter-group">
+          <h4>Color</h4>
+          <label class="filter-option"><input type="checkbox" checked> Verde oliva <span class="count">18</span></label>
+          <label class="filter-option"><input type="checkbox"> Verde bosque <span class="count">12</span></label>
+          <label class="filter-option"><input type="checkbox"> Verde musgo <span class="count">7</span></label>
+          <label class="filter-option"><input type="checkbox"> Verde menta <span class="count">4</span></label>
+        </div>
+      </aside>
+
+      <div class="products-grid">
+        <div class="product-card" onclick="showView('pdp')">
+          <div class="product-img pc-1"></div>
+          <div class="product-meta">
+            <span class="product-brand">Alzado</span>
+          </div>
+          <div class="product-name">Campera utility oliva</div>
+          <div class="product-price">AR$ 48.000</div>
+        </div>
+        <div class="product-card" onclick="showView('pdp')">
+          <div class="product-img pc-2"></div>
+          <div class="product-meta">
+            <span class="product-brand">Mineral</span>
+          </div>
+          <div class="product-name">Campera de gabardina</div>
+          <div class="product-price">AR$ 62.500</div>
+        </div>
+        <div class="product-card" onclick="showView('pdp')">
+          <div class="product-img pc-3"></div>
+          <div class="product-meta">
+            <span class="product-brand">Pérez Estudio</span>
+          </div>
+          <div class="product-name">Chaqueta estructurada</div>
+          <div class="product-price">AR$ 74.000</div>
+        </div>
+        <div class="product-card" onclick="showView('pdp')">
+          <div class="product-img pc-4"></div>
+          <div class="product-meta">
+            <span class="product-brand">Tuya</span>
+          </div>
+          <div class="product-name">Parka liviana kaki</div>
+          <div class="product-price">AR$ 52.000</div>
+        </div>
+        <div class="product-card" onclick="showView('pdp')">
+          <div class="product-img pc-5"></div>
+          <div class="product-meta">
+            <span class="product-brand">Alzado</span>
+          </div>
+          <div class="product-name">Campera cropped</div>
+          <div class="product-price">AR$ 39.500</div>
+        </div>
+        <div class="product-card" onclick="showView('pdp')">
+          <div class="product-img pc-6"></div>
+          <div class="product-meta">
+            <span class="product-brand">Mineral</span>
+          </div>
+          <div class="product-name">Abrigo matelassé</div>
+          <div class="product-price">AR$ 89.000</div>
+        </div>
+        <div class="product-card" onclick="showView('pdp')">
+          <div class="product-img pc-7"></div>
+          <div class="product-meta">
+            <span class="product-brand">Pérez Estudio</span>
+          </div>
+          <div class="product-name">Overshirt denim</div>
+          <div class="product-price">AR$ 44.000</div>
+        </div>
+        <div class="product-card" onclick="showView('pdp')">
+          <div class="product-img pc-8"></div>
+          <div class="product-meta">
+            <span class="product-brand">Alzado</span>
+          </div>
+          <div class="product-name">Chaleco utilitario</div>
+          <div class="product-price">AR$ 31.000</div>
+        </div>
+        <div class="product-card" onclick="showView('pdp')">
+          <div class="product-img pc-9"></div>
+          <div class="product-meta">
+            <span class="product-brand">Tuya</span>
+          </div>
+          <div class="product-name">Campera oversize lino</div>
+          <div class="product-price">AR$ 56.500</div>
+        </div>
+      </div>
+
+    </div>
+
+  </div>
+</section>
+
+<!-- ========= PDP ========= -->
+<section class="view" id="view-pdp">
+  <div class="container">
+    <div class="pdp-layout">
+      <div class="pdp-gallery">
+        <div class="thumb-col">
+          <div class="thumb tb-1 active"></div>
+          <div class="thumb tb-2"></div>
+          <div class="thumb tb-3"></div>
+          <div class="thumb tb-4"></div>
+        </div>
+        <div class="main-img"></div>
+      </div>
+      <div class="pdp-info">
+        <div class="pdp-brand" onclick="showView('brand')">Alzado →</div>
+        <h1 class="pdp-title">Campera utility<br>en oliva</h1>
+        <div class="pdp-price">AR$ 48.000</div>
+
+        <div class="pdp-section">
+          <div class="label">Talle</div>
+          <div class="sizes">
+            <button class="size-btn">XS</button>
+            <button class="size-btn selected">S</button>
+            <button class="size-btn">M</button>
+            <button class="size-btn">L</button>
+            <button class="size-btn disabled">XL</button>
+          </div>
+        </div>
+
+        <button class="add-to-bag" onclick="addToBag()">Agregar a la bolsa</button>
+        <button class="wishlist-btn">Guardar en wishlist ♡</button>
+
+        <div class="pdp-details">
+          <div class="detail-row">
+            <span>Descripción</span>
+            <span class="icon">+</span>
+          </div>
+          <div class="detail-row">
+            <span>Materiales y cuidado</span>
+            <span class="icon">+</span>
+          </div>
+          <div class="detail-row">
+            <span>Envíos y cambios</span>
+            <span class="icon">+</span>
+          </div>
+          <div class="detail-row">
+            <span>Sobre la marca</span>
+            <span class="icon">+</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ========= BRAND PAGE ========= -->
+<section class="view" id="view-brand">
+
+  <div class="brand-hero">
+    <div class="brand-hero-inner">
+      <div class="label">Marca destacada</div>
+      <h1>Alzado</h1>
+      <div class="meta">Buenos Aires · fundada en 2021 · 46 productos activos</div>
+    </div>
+  </div>
+
+  <div class="brand-bio">
+    <p>Alzado nace en un taller de Villa Crespo en 2021. Tres diseñadoras, una filosofía clara. Prendas construidas para durar, pensadas para cuerpos reales, producidas a menos de veinte cuadras de donde se venden. Todo lo demás sale de ahí.</p>
+    <button class="follow-brand-btn">Seguir marca</button>
+  </div>
+
+  <div class="container">
+    <div class="section-head" style="margin-bottom: var(--space-5);">
+      <h2 class="section-title">Colección actual</h2>
+      <span class="section-link">Ver las 46 piezas →</span>
+    </div>
+
+    <div class="products-grid">
+      <div class="product-card" onclick="showView('pdp')">
+        <div class="product-img pc-1"></div>
+        <div class="product-name">Campera utility oliva</div>
+        <div class="product-price">AR$ 48.000</div>
+      </div>
+      <div class="product-card" onclick="showView('pdp')">
+        <div class="product-img pc-5"></div>
+        <div class="product-name">Campera cropped</div>
+        <div class="product-price">AR$ 39.500</div>
+      </div>
+      <div class="product-card" onclick="showView('pdp')">
+        <div class="product-img pc-8"></div>
+        <div class="product-name">Chaleco utilitario</div>
+        <div class="product-price">AR$ 31.000</div>
+      </div>
+      <div class="product-card" onclick="showView('pdp')">
+        <div class="product-img pc-3"></div>
+        <div class="product-name">Pantalón ancho lino</div>
+        <div class="product-price">AR$ 42.500</div>
+      </div>
+      <div class="product-card" onclick="showView('pdp')">
+        <div class="product-img pc-6"></div>
+        <div class="product-name">Blusa de seda</div>
+        <div class="product-price">AR$ 28.000</div>
+      </div>
+      <div class="product-card" onclick="showView('pdp')">
+        <div class="product-img pc-9"></div>
+        <div class="product-name">Falda larga plisada</div>
+        <div class="product-price">AR$ 37.000</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ========= BAG ========= -->
+<section class="view" id="view-bag">
+  <div class="bag-view">
+    <h1 class="bag-title">Tu bolsa</h1>
+    <div class="bag-sub">3 piezas · 2 marcas · despachos separados</div>
+
+    <div class="bag-brand-group">
+      <div class="bag-brand-name">Alzado</div>
+
+      <div class="bag-item">
+        <div class="bag-item-img bi-1"></div>
+        <div class="bag-item-info">
+          <h3>Vestido noche Alzado</h3>
+          <div class="size">Talle M</div>
+          <div class="qty-control">
+            <button>−</button>
+            <span>1</span>
+            <button>+</button>
+          </div>
+        </div>
+        <div class="bag-item-price">
+          <div class="amount">AR$ 28.000</div>
+          <div class="remove-link">Quitar</div>
+        </div>
+      </div>
+
+      <div class="bag-item">
+        <div class="bag-item-img bi-2"></div>
+        <div class="bag-item-info">
+          <h3>Sandalia de cuero trenzado</h3>
+          <div class="size">Talle 38</div>
+          <div class="qty-control">
+            <button>−</button>
+            <span>1</span>
+            <button>+</button>
+          </div>
+        </div>
+        <div class="bag-item-price">
+          <div class="amount">AR$ 35.000</div>
+          <div class="remove-link">Quitar</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="bag-brand-group">
+      <div class="bag-brand-name">Mineral</div>
+
+      <div class="bag-item">
+        <div class="bag-item-img bi-3"></div>
+        <div class="bag-item-info">
+          <h3>Pantalón lino crudo</h3>
+          <div class="size">Talle M</div>
+          <div class="qty-control">
+            <button>−</button>
+            <span>1</span>
+            <button>+</button>
+          </div>
+        </div>
+        <div class="bag-item-price">
+          <div class="amount">AR$ 22.000</div>
+          <div class="remove-link">Quitar</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="bag-summary">
+      <div class="summary-row">
+        <span>Subtotal</span>
+        <span>AR$ 85.000</span>
+      </div>
+      <div class="summary-row">
+        <span>Envíos (2 paquetes)</span>
+        <span>AR$ 4.500</span>
+      </div>
+      <div class="summary-row total">
+        <span>Total</span>
+        <span>AR$ 89.500</span>
+      </div>
+    </div>
+
+    <button class="checkout-btn" onclick="showToast('Checkout pendiente en prototipo')">Continuar al pago</button>
+
+    <div style="text-align: center; margin-top: var(--space-5); font-size: 13px; color: var(--gray-mid);">
+      Envíos desde cada marca por separado. Un solo pago, varios despachos.
+    </div>
+  </div>
+</section>
+
+<!-- ========= FOOTER ========= -->
+<footer class="footer">
+  <div class="container">
+    <div class="footer-grid">
+      <div class="footer-brand">
+        <h3>Rambla<span style="color: var(--terracotta); font-style: italic;">.ai</span></h3>
+        <p>El marketplace curado de moda argentina independiente. Marcas seleccionadas, fotografía editorial, búsqueda inteligente.</p>
+      </div>
+      <div class="footer-col">
+        <h4>Explorar</h4>
+        <ul>
+          <li>Marcas</li>
+          <li>Categorías</li>
+          <li>Nuevas llegadas</li>
+          <li>Editorial</li>
+        </ul>
+      </div>
+      <div class="footer-col">
+        <h4>Ayuda</h4>
+        <ul>
+          <li>Envíos</li>
+          <li>Cambios</li>
+          <li>Tu cuenta</li>
+          <li>Contacto</li>
+        </ul>
+      </div>
+      <div class="footer-col">
+        <h4>Sobre Rambla</h4>
+        <ul>
+          <li>Qué hacemos</li>
+          <li>Sumá tu marca</li>
+          <li>Editorial</li>
+          <li>Instagram</li>
+        </ul>
+      </div>
+    </div>
+    <div class="footer-bottom">
+      <span>© 2026 Rambla.ai · Buenos Aires</span>
+      <span>Prototipo v0.1</span>
+    </div>
+  </div>
+</footer>
+
+<div class="toast" id="toast">Agregado a tu bolsa</div>
+
+<script>
+function showView(viewName) {
+  document.querySelectorAll('.view').forEach(v => v.classList.remove('active'));
+  document.getElementById('view-' + viewName).classList.add('active');
+  window.scrollTo({ top: 0, behavior: 'instant' });
+}
+
+function showToast(msg) {
+  const toast = document.getElementById('toast');
+  toast.textContent = msg || 'Agregado a tu bolsa';
+  toast.classList.add('show');
+  setTimeout(() => toast.classList.remove('show'), 2400);
+}
+
+let bagCount = 3;
+function addToBag() {
+  bagCount++;
+  document.getElementById('bag-count').textContent = bagCount;
+  showToast('Agregado a tu bolsa');
+}
+
+// thumbnails en PDP
+document.querySelectorAll('.thumb').forEach(t => {
+  t.addEventListener('click', function() {
+    document.querySelectorAll('.thumb').forEach(x => x.classList.remove('active'));
+    this.classList.add('active');
+    const mainImg = document.querySelector('.main-img');
+    const colors = {
+      'tb-1': 'linear-gradient(180deg, #D4C8BA 0%, #8E7F6E 100%)',
+      'tb-2': 'linear-gradient(180deg, #8E7F6E 0%, #5C4D3E 100%)',
+      'tb-3': 'linear-gradient(180deg, #B5A488 0%, #7C6B50 100%)',
+      'tb-4': 'linear-gradient(180deg, #C9BCA0 0%, #8A7C60 100%)',
+    };
+    const cls = Array.from(this.classList).find(c => c.startsWith('tb-'));
+    if (cls && colors[cls]) mainImg.style.background = colors[cls];
+  });
+});
+
+// size selection
+document.querySelectorAll('.size-btn').forEach(b => {
+  b.addEventListener('click', function(e) {
+    if (this.classList.contains('disabled')) return;
+    document.querySelectorAll('.size-btn').forEach(x => x.classList.remove('selected'));
+    this.classList.add('selected');
+  });
+});
+
+// filter chips
+document.querySelectorAll('.chip').forEach(c => {
+  c.addEventListener('click', function() {
+    document.querySelectorAll('.chip').forEach(x => x.classList.remove('active'));
+    this.classList.add('active');
+  });
+});
+</script>
+
+</body>
+</html>

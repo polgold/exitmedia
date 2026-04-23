@@ -35,12 +35,12 @@ export default function robots(): MetadataRoute.Robots {
       {
         userAgent: "*",
         allow: "/",
-        disallow: ["/api/", "/_next/", "/admin"],
+        disallow: ["/api/", "/_next/", "/admin", "/rambla"],
       },
       {
         userAgent: aiCrawlers,
         allow: "/",
-        disallow: ["/api/"],
+        disallow: ["/api/", "/rambla"],
       },
     ],
     sitemap: `${BASE}/sitemap.xml`,
