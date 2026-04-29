@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 import { projectMeta, getProjectMeta } from "@/lib/projects";
 import { ProjectCard } from "@/components/ProjectCard";
+import { ClientsGrid } from "@/components/ClientsGrid";
 import { MotionIn } from "@/components/ui/MotionIn";
 import { HomeContact } from "@/components/HomeContact";
 import { getDictionary } from "@/lib/i18n/dictionaries";
@@ -75,6 +76,8 @@ export default async function TrabajosPage({ params }: { params: PageParams }) {
           })}
         </div>
       </div>
+
+      <ClientsGrid dict={dict} />
 
       <HomeContact lang={locale} dict={dict} />
     </>

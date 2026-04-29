@@ -93,6 +93,16 @@ export const es: Dictionary = {
     titleSuffix: ".",
     viewAll: "Ver todos",
   },
+  clientsSection: {
+    label: "Clientes",
+    titlePrefix: "Marcas que ",
+    titleHighlight: "confían",
+    titleSuffix: " en nosotros.",
+    intro:
+      "Una selección de sitios y productos que diseñamos, desarrollamos o mantenemos. Click en cualquier tarjeta para abrir el sitio.",
+    visitLabel: "Visitar el sitio de",
+    previewAltPrefix: "Captura del sitio de",
+  },
   testimonials: {
     label: "Lo que dicen",
     titlePrefix: "Palabras de gente que ",

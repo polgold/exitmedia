@@ -91,6 +91,15 @@ export type Dictionary = {
     titleSuffix: string;
     viewAll: string;
   };
+  clientsSection: {
+    label: string;
+    titlePrefix: string;
+    titleHighlight: string;
+    titleSuffix: string;
+    intro: string;
+    visitLabel: string;
+    previewAltPrefix: string;
+  };
   testimonials: {
     label: string;
     titlePrefix: string;
