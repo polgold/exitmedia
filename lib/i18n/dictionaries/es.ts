@@ -102,6 +102,30 @@ export const es: Dictionary = {
       "Una selección de sitios y productos que diseñamos, desarrollamos o mantenemos. Click en cualquier tarjeta para abrir el sitio.",
     visitLabel: "Visitar el sitio de",
     previewAltPrefix: "Captura del sitio de",
+    descriptions: {
+      "italmarket.com.ar":
+        "Tienda porteña especializada en productos italianos importados — pastas, aceites, quesos, vinos y conservas.",
+      "sunfactory.com.ar":
+        "Productora audiovisual de Buenos Aires con más de 20 años haciendo cine y contenidos comerciales para marcas.",
+      "guidr.info":
+        "Guías curadas de Buenos Aires escritas por residentes — restaurantes, bares y lugares para vivir la ciudad como uno más.",
+      "pablogoldberg.com":
+        "Showreel del director y productor con más de 20 años en cine, documentales y publicidad.",
+      "storemcp.io":
+        "Plugin de WordPress que expone WooCommerce como servidor MCP — controlá tu tienda desde Claude.",
+      "carmenmesa.vercel.app":
+        "Bailaora andaluza con espectáculos, clases y workshops de flamenco entre Andalucía y Argentina.",
+      "klapr.io":
+        "CRM para productoras audiovisuales: clientes, trabajos, equipamiento y facturación en un solo lugar.",
+      "mirtazaliauskas.com":
+        "Artista visual argentina que trabaja con técnicas mixtas, dibujo, grabado y materiales reciclados.",
+      "domus-rouge.vercel.app":
+        "Agencia de locaciones para cine y publicidad en Buenos Aires — un catálogo de espacios que filmás sin improvisar.",
+      "sandralopez.com.ar":
+        "Psicóloga y sexóloga clínica. Consultas individuales, de pareja y grupales — presenciales en Buenos Aires y online.",
+      "dramariaflorenciagianetto.com":
+        "Odontología integrativa con enfoque holístico. Consultorios en Buenos Aires y Roma, con un equipo de especialistas.",
+    },
   },
   testimonials: {
     label: "Lo que dicen",

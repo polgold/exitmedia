@@ -99,6 +99,7 @@ export type Dictionary = {
     intro: string;
     visitLabel: string;
     previewAltPrefix: string;
+    descriptions: Record<string, string>;
   };
   testimonials: {
     label: string;

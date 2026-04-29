@@ -102,6 +102,30 @@ export const en: Dictionary = {
       "A selection of sites and products we design, build or maintain. Click any card to open the site.",
     visitLabel: "Visit the site of",
     previewAltPrefix: "Screenshot of the site of",
+    descriptions: {
+      "italmarket.com.ar":
+        "Buenos Aires deli specializing in imported Italian goods — pasta, olive oil, cheese, wine and preserves.",
+      "sunfactory.com.ar":
+        "Buenos Aires film studio with 20+ years producing commercial content and films for brands.",
+      "guidr.info":
+        "Curated Buenos Aires guides written by locals — restaurants, bars and places to live the city like a resident.",
+      "pablogoldberg.com":
+        "Showreel of the director/producer with 20+ years in film, documentary and advertising.",
+      "storemcp.io":
+        "WordPress plugin that exposes WooCommerce as an MCP server — control your store from Claude.",
+      "carmenmesa.vercel.app":
+        "Andalusian flamenco dancer with shows, classes and workshops between Andalusia and Argentina.",
+      "klapr.io":
+        "CRM for film and content production companies: clients, jobs, gear and invoicing in one place.",
+      "mirtazaliauskas.com":
+        "Argentine visual artist working with mixed media, drawing, printmaking and recycled materials.",
+      "domus-rouge.vercel.app":
+        "Locations agency for film and advertising shoots in Buenos Aires — a catalog of spaces you scout without guessing.",
+      "sandralopez.com.ar":
+        "Clinical psychologist and sexologist. Individual, couples and group sessions — in-person in Buenos Aires and online.",
+      "dramariaflorenciagianetto.com":
+        "Integrative dentistry with a holistic approach. Practices in Buenos Aires and Rome, with a team of specialists.",
+    },
   },
   testimonials: {
     label: "What they say",

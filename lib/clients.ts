@@ -60,4 +60,16 @@ export const clients: Client[] = [
     domain: "domus-rouge.vercel.app",
     image: "/clients/domus-rouge.png",
   },
+  {
+    name: "Sandra López",
+    url: "https://sandralopez.com.ar",
+    domain: "sandralopez.com.ar",
+    image: "/clients/sandralopez.png",
+  },
+  {
+    name: "Dra. María Florencia Gianetto",
+    url: "https://dramariaflorenciagianetto.com",
+    domain: "dramariaflorenciagianetto.com",
+    image: "/clients/dramfgianetto.jpg",
+  },
 ];
